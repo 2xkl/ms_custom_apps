@@ -32,20 +32,20 @@ steps:
     displayName: 'Build React App'
     workingDirectory: ui-chat
 
-  - task: Bash@3
-    displayName: "Azure login"
-    inputs:
-      targetType: "inline"
-      workingDirectory: ui-chat
-      script: |
-        az login --service-principal \
-          --username "$SP_USERNAME" \
-          --password "$SP_PASSWORD" \
-          --tenant "$TENANT_ID"
-    env:
-      SP_USERNAME: $(ARMCLIENTID)
-      SP_PASSWORD: $(ARMCLIENTSECRET)
-      TENANT_ID: $(ARMTENANTID)
+  # - task: Bash@3
+  #   displayName: "Azure login"
+  #   inputs:
+  #     targetType: "inline"
+  #     workingDirectory: ui-chat
+  #     script: |
+  #       az login --service-principal \
+  #         --username "$SP_USERNAME" \
+  #         --password "$SP_PASSWORD" \
+  #         --tenant "$TENANT_ID"
+  #   env:
+  #     SP_USERNAME: $(ARMCLIENTID)
+  #     SP_PASSWORD: $(ARMCLIENTSECRET)
+  #     TENANT_ID: $(ARMTENANTID)
 
   - task: Bash@3
     displayName: "Azure Upload SWA"
@@ -55,8 +55,6 @@ steps:
       script: |
         echo "Uploading build output to SWA..."
         swa deploy ./build
-        # az staticwebapp upload \
-        #   --name $SWA_NAME \
-        #   --resource-group $SWA_RESOURCE_GROUP \
-        #   --source $OUTPUT_LOCATION \
-        #   --output-location $OUTPUT_LOCATION
+        SWA_CLI_DEPLOYMENT_TOKEN=$(TOKEN) swa deploy ./build/
+    env:
+      TOKEN: $(SWATOKEN)
