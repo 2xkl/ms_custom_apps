@@ -21,31 +21,12 @@ variables:
     value: 'build'
 
 steps:
-  # - task: NodeTool@0
-  #   inputs:
-  #     versionSpec: '18.x'
-  #   displayName: 'Install Node.js'
 
   - script: |
       npm install
-      npm run build
+      REACT_APP_API_URL="https://api.example.com/chat" npm run build
     displayName: 'Build React App'
     workingDirectory: ui-chat
-
-  # - task: Bash@3
-  #   displayName: "Azure login"
-  #   inputs:
-  #     targetType: "inline"
-  #     workingDirectory: ui-chat
-  #     script: |
-  #       az login --service-principal \
-  #         --username "$SP_USERNAME" \
-  #         --password "$SP_PASSWORD" \
-  #         --tenant "$TENANT_ID"
-  #   env:
-  #     SP_USERNAME: $(ARMCLIENTID)
-  #     SP_PASSWORD: $(ARMCLIENTSECRET)
-  #     TENANT_ID: $(ARMTENANTID)
 
   - task: Bash@3
     displayName: "Azure Upload SWA"

@@ -27,7 +27,6 @@ function Mermaid({ chart }) {
   return <div ref={ref} />;
 }
 
-// Prosta funkcja do rozbicia tekstu na kawałki: tekst + bloki kodu (```lang ... ```)
 function parseCodeBlocks(text) {
   const regex = /```(\w+)?\n([\s\S]*?)```/g;
   let lastIndex = 0;
@@ -57,7 +56,6 @@ function ChatResponse({ response }) {
           if (part.lang === "mermaid") {
             return <Mermaid key={i} chart={part.content} />;
           }
-          // podświetlanie kodu dla innych języków (np. bicep, json)
           return (
             <SyntaxHighlighter
               key={i}
@@ -69,7 +67,6 @@ function ChatResponse({ response }) {
             </SyntaxHighlighter>
           );
         }
-        // zwykły tekst, zachowujemy podział na paragrafy
         return <p key={i}>{part.content}</p>;
       })}
     </div>
@@ -80,7 +77,7 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const [history, setHistory] = useState([]); // {question, answer}
   const [loading, setLoading] = useState(false);
-
+  const apiUrl = process.env.REACT_APP_API_URL;
   async function handleSubmit(e) {
     e.preventDefault();
     if (!input.trim()) return;
@@ -88,7 +85,7 @@ export default function Chat() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/chat", {
+      const res = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: input }),
