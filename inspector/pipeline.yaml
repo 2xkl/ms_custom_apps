@@ -35,15 +35,15 @@ stages:
             displayName: Build Docker Image
             inputs:
               targetType: inline
-              workingDirectory: inspektor
+              workingDirectory: inspector
               script: |
-                docker build -t $ACR_NAME.azurecr.io/inspektor:$(Build.BuildId) .
+                docker build -t $ACR_NAME.azurecr.io/inspector:$(Build.BuildId) .
           
           - task: Bash@3
             displayName: Push Docker Image
             inputs:
               targetType: inline
               script: |
-                docker push $ACR_NAME.azurecr.io/inspektor:$(Build.BuildId)
+                docker push $ACR_NAME.azurecr.io/inspector:$(Build.BuildId)
             env:
               ACR_NAME: $(ACR_NAME)
