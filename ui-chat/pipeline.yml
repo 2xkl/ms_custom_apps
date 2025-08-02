@@ -54,8 +54,9 @@ steps:
       workingDirectory: ui-chat
       script: |
         echo "Uploading build output to SWA..."
-        az staticwebapp upload \
-          --name $SWA_NAME \
-          --resource-group $SWA_RESOURCE_GROUP \
-          --source $OUTPUT_LOCATION \
-          --output-location $OUTPUT_LOCATION
+        swa deploy ./build
+        # az staticwebapp upload \
+        #   --name $SWA_NAME \
+        #   --resource-group $SWA_RESOURCE_GROUP \
+        #   --source $OUTPUT_LOCATION \
+        #   --output-location $OUTPUT_LOCATION
