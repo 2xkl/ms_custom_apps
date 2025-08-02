@@ -6,6 +6,8 @@ trigger:
     include:
       - chat/**
 
+name: chat:$(Build.BuildId)
+
 pool:
   name: Default
 

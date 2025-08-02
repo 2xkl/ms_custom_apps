@@ -6,6 +6,8 @@ trigger:
     include:
       - inspector/**
 
+name: inspector:$(Build.BuildId)
+
 pool:
   name: Default
 
