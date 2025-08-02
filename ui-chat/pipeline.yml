@@ -54,6 +54,7 @@ steps:
       workingDirectory: ui-chat
       script: |
         echo "Uploading build output to SWA..."
-        SWA_CLI_DEPLOYMENT_TOKEN=$(TOKEN) swa deploy ./build/
+        ls
+        SWA_CLI_DEPLOYMENT_TOKEN=$TOKEN swa deploy ./build/
     env:
       TOKEN: $(SWATOKEN)
