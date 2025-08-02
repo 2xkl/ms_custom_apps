@@ -47,5 +47,6 @@ stages:
               targetType: inline
               script: |
                 docker push $ACR_NAME.azurecr.io/inspector:$(Build.BuildId)
+                echo $ACR_NAME.azurecr.io/chat:$(Build.BuildId)
             env:
               ACR_NAME: $(ACR_NAME)
