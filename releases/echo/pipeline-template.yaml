@@ -111,15 +111,6 @@ stages:
               # Set pipeline variable
               Write-Host "##vso[task.setvariable variable=ECHO_SERVICE_IP;isOutput=true]$externalIp"
 
-        - task: PowerShell@2
-          displayName: Set specification
-          inputs:
-            targetType: inline
-            workingDirectory: releases/echo
-            script: |
-              $externalIp = "$(ECHO_SERVICE_IP)"
-              Write-Host "External IP from previous step: $externalIp"
-
               (Get-Content -Path "./APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml") -replace "SERVICE_IP", "$externalIp" | Set-Content -Path "APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml"
               type APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml
               
