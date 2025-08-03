@@ -82,6 +82,7 @@ stages:
           displayName: "Wait for Service External IP"
           inputs:
             targetType: inline
+            workingDirectory: releases/echo
             script: |
               $serviceName = "echo-service"
               $namespace = "default"
