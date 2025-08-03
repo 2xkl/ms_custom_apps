@@ -1,19 +1,33 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from openai import AzureOpenAI
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 import os
+import json
 
-subscription_key = os.getenv("AZURE_OPENAI_API_KEY")
-endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
-deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT")
-api_version = os.getenv("AZURE_OPENAI_API_VERSION")
+# Konfiguracja Key Vault
+key_vault_name = os.getenv("AZURE_KEYVAULT_NAME")  # np. zdefiniowane jako zmienna środowiskowa lub przez ConfigMap
+kv_uri = f"https://{key_vault_name}.vault.azure.net"
 
+# Autoryzacja za pomocą workload identity
+credential = DefaultAzureCredential()
+secret_client = SecretClient(vault_url=kv_uri, credential=credential)
+
+# Pobierz dane z Key Vault
+subscription_key = secret_client.get_secret("OAIKEY").value
+endpoint = secret_client.get_secret("OAIENDPOINT").value
+deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT")  # Zakładamy, że deployment jest stały i ustawiony jako env
+api_version = os.getenv("AZURE_OPENAI_API_VERSION", "2024-05-01-preview")  # Można też wrzucić do KV
+
+# Inicjalizacja klienta OpenAI
 client = AzureOpenAI(
     api_version=api_version,
     azure_endpoint=endpoint,
     api_key=subscription_key,
 )
 
+# FastAPI app
 app = FastAPI()
 
 class InspectRequest(BaseModel):
@@ -35,7 +49,6 @@ For each message, return:
 Example response in JSON format:
 { "type": "spam", "score": 0.85, "reason": "Contains phrases typical of spam" }
 """
-
     user_message = f"Sender: {sender}\nMessage content:\n{message}\n\nPlease evaluate this message."
 
     response = client.chat.completions.create(
@@ -48,7 +61,6 @@ Example response in JSON format:
 
     content = response.choices[0].message.content
 
-    import json
     try:
         parsed = json.loads(content)
         return InspectResponse(
