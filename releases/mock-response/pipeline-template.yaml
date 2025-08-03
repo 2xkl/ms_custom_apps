@@ -17,7 +17,7 @@ stages:
   - stage: '${{ stage.name }}'
     displayName: '${{ stage.name }} Deployment'
     variables:
-      - group: SEC_MS_ACR
+      - group: SEC_MS
       - name: apiops_release_version
         value: "v5.1.4"
 
