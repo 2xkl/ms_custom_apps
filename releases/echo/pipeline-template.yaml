@@ -1,0 +1,156 @@
+parameters:
+- name: stages
+  type: object
+  default: []
+
+stages:
+- ${{ each stage in parameters.stages }}:
+  - stage: '${{ stage.name }}'
+    displayName: '${{ stage.name }} Deployment'
+    variables:
+      - group: SEC_MS
+      - name: apiops_release_version
+        value: "v5.1.4"
+      - name: API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH
+        value: 'APIMConfig'
+      - name: RESOURCE_GROUP_NAME
+        value: 'z-rg-aks-dev'
+      - name: API_MANAGEMENT_SERVICE_NAME
+        value: 'apim-custom-2xkl'
+      - name: APIM_LOGGER_NAME
+        value: "appinsights-logger"
+      - name: CONFIGURATION_YAML_PATH
+        value: './APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml'
+
+    jobs:
+    - job: BuildAndPublish
+      displayName: 'Build and Publish'
+      pool:
+        name: Default
+      steps:
+
+        - task: PowerShell@2
+          displayName: Set publishing variables
+          inputs:
+            targetType: inline
+            script: |
+              Set-StrictMode -Version Latest
+              $ErrorActionPreference = "Stop"
+              $VerbosePreference = "Continue"
+              $InformationPreference = "Continue"
+
+              az login --service-principal `
+                --username "$env:SP_USERNAME" `
+                --password "$env:SP_PASSWORD" `
+                --tenant "$env:TENANT_ID"
+
+              # Get access token
+              $azureAccessToken = az account get-access-token --query "accessToken" --output tsv
+              Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_BEARER_TOKEN]$azureAccessToken"
+              Write-Host "Bearer token retrieved and set."
+
+              # Set remaining variables from environment
+              Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_CLIENT_ID]$env:SP_USERNAME"
+              Write-Host "Client ID retrieved and set."
+
+              Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_CLIENT_SECRET]$env:SP_PASSWORD"
+              Write-Host "Client secret retrieved and set."
+
+              Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_TENANT_ID]$env:TENANT_ID"
+              Write-Host "Tenant ID retrieved and set."
+          env:
+            SP_USERNAME: $(ARMCLIENTID)
+            SP_PASSWORD: $(ARMCLIENTSECRET)
+            TENANT_ID: $(ARMTENANTID)
+
+        - task: PowerShell@2
+          displayName: Get Aks Context and publish app
+          inputs:
+            targetType: "inline"
+            workingDirectory: releases/echo
+            script: |
+              $resourceGroup = "${{ stage.AKSRG}}"
+              $clusterName = "${{ stage.AKS}}"
+              
+              Write-Host "Getting AKS credentials for cluster '$clusterName' in resource group '$resourceGroup'..."
+              az aks get-credentials --resource-group $resourceGroup --name $clusterName --overwrite-existing
+
+              Write-Host "Applying Kubernetes manifest: app/deployment.yaml"
+              kubectl apply -f app/deployment.yaml
+
+        - task: PowerShell@2
+          displayName: Set specification
+          inputs:
+            targetType: inline
+            workingDirectory: releases/echo
+            script: |
+              Write-Host "Subscription ID: ${{ stage.subscriptionId }}"
+              (Get-Content -Path "./APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml") -replace "/subscriptions/SUBSCRIPTION_ID/resourceGroups/RESOURCE_GROUP_NAME/providers/Microsoft.ApiManagement/service/APIM_NAME/loggers/APIM_LOGGER_NAME", "/subscriptions/${{ stage.subscriptionId }}/resourceGroups/${{ variables.RESOURCE_GROUP_NAME }}/providers/Microsoft.ApiManagement/service/${{ variables.API_MANAGEMENT_SERVICE_NAME }}/loggers/${{ variables.APIM_LOGGER_NAME }}" | Set-Content -Path "APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml"
+              type APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml
+              # ADD SERVICE IP 
+
+        - task: PowerShell@2
+          displayName: Fetch publisher
+          inputs:
+            targetType: "inline"
+            workingDirectory: releases/echo
+            script: |
+              # Debug: Print variables
+              Write-Host "APIOps Release Version: $(apiops_release_version)"
+              Write-Host "Operating System: $(Agent.OS)"
+              
+              Set-StrictMode -Version Latest
+              $ErrorActionPreference = "Stop"
+              $VerbosePreference = "Continue"
+              $InformationPreference = "Continue"
+
+              Write-Information "Downloading publisher..."
+              $publisherFileName = "$(Agent.OS)" -like "*win*" ? "publisher.win-x64.exe" : "publisher.linux-x64"
+              $uri = "https://github.com/Azure/apiops/releases/download/$(apiops_release_version)/$publisherFileName"
+              Write-Host "Constructed Download URI: $uri"
+              $destinationFilePath = Join-Path "$(Agent.TempDirectory)" "publisher.exe"
+              Invoke-WebRequest -Uri "$uri" -OutFile "$destinationFilePath"
+
+              if ("$(Agent.OS)" -like "*linux*")
+              {
+                Write-Information "Setting file permissions..."
+                & chmod +x "$destinationFilePath"
+                if ($LASTEXITCODE -ne 0) { throw "Setting file permissions failed."}
+              }
+              Write-Host "PublisherFileName: $publisherFileName"
+              Write-Host "DestinationFile: $destinationFilePath"
+              Write-Host "##vso[task.setvariable variable=PUBLISHER_FILE_PATH]$destinationFilePath"
+              Write-Information "Execution complete."
+            failOnStderr: true
+            pwsh: true
+
+        - task: PowerShell@2
+          displayName: Run publisher for ${{ stage.environmentCode}} environment
+          inputs:
+            targetType: "inline"
+            workingDirectory: releases/echo
+            script: |
+              dir
+              ls
+              type APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml
+              Set-StrictMode -Version Latest
+              $ErrorActionPreference = "Stop"
+              $VerbosePreference = "Continue"
+              $InformationPreference = "Continue"
+
+              & "$(PUBLISHER_FILE_PATH)"                
+              if ($LASTEXITCODE -ne 0) { throw "Running publisher failed."}
+
+              Write-Information "Execution complete."
+            failOnStderr: true
+            pwsh: true
+          env:
+            AZURE_BEARER_TOKEN: $(AZURE_BEARER_TOKEN)
+            AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+            AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+            AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+            AZURE_SUBSCRIPTION_ID: ${{ stage.subscriptionId }}
+            AZURE_RESOURCE_GROUP_NAME: ${{ variables.RESOURCE_GROUP_NAME }}
+            API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH: ${{ variables.API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH }}
+            API_MANAGEMENT_SERVICE_NAME: ${{ variables.API_MANAGEMENT_SERVICE_NAME }}
+            CONFIGURATION_YAML_PATH: ${{ variables.CONFIGURATION_YAML_PATH }}

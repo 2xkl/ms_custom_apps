@@ -1,0 +1,67 @@
+openapi: 3.0.3
+info:
+  title: Echo Service
+  version: "1.0.0"
+  description: |
+    A simple HTTP echo service that returns request metadata, headers, and body.
+    Useful for debugging and testing client integrations.
+servers:
+  - url: http://echo-service.default.svc.cluster.local
+    description: Internal Kubernetes service
+
+paths:
+  /:
+    get:
+      summary: Echo GET
+      description: Returns details of the incoming GET request.
+      responses:
+        '200':
+          description: Echoed request details
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      summary: Echo POST
+      description: Returns the received POST request payload and metadata.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Echoed request body and metadata
+          content:
+            application/json:
+              schema:
+                type: object
+    put:
+      summary: Echo PUT
+      description: Returns the received PUT request payload and metadata.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Echoed request body and metadata
+          content:
+            application/json:
+              schema:
+                type: object
+    delete:
+      summary: Echo DELETE
+      description: Acknowledges the DELETE request with request details.
+      responses:
+        '200':
+          description: Echoed request metadata
+          content:
+            application/json:
+              schema:
+                type: object

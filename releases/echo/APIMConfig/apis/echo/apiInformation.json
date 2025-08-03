@@ -3,9 +3,9 @@
     "apiRevision": "1",
     "authenticationSettings": {},
     "description": "",
-    "displayName": "Mock Response",
+    "displayName": "Echo",
     "isCurrent": true,
-    "path": "mock",
+    "path": "echo",
     "protocols": [
       "http"
     ],
