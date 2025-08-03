@@ -109,6 +109,7 @@ stages:
           displayName: Fetch publisher
           inputs:
             targetType: "inline"
+            workingDirectory: releases/mock-response
             script: |
               # Debug: Print variables
               Write-Host "APIOps Release Version: $(apiops_release_version)"
