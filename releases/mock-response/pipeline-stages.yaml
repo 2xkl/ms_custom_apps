@@ -1,5 +1,8 @@
 trigger: none
 
+pool:
+  name: Default
+
 parameters:
   - name: dev
     displayName: DEV
