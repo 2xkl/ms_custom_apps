@@ -117,11 +117,12 @@ stages:
             targetType: inline
             workingDirectory: releases/echo
             script: |
-              Write-Host "Subscription ID: ${{ stage.subscriptionId }}"
-              (Get-Content -Path "./APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml") -replace "SERVICE_IP", "$ECHO_SERVICE_IP" | Set-Content -Path "APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml"
-              type APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml
-              # ADD SERVICE IP 
+              $externalIp = "$(getServiceIp.ECHO_SERVICE_IP)"
+              Write-Host "External IP from previous step: $externalIp"
 
+              (Get-Content -Path "./APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml") -replace "SERVICE_IP", "$externalIp" | Set-Content -Path "APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml"
+              type APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml
+              
         - task: PowerShell@2
           displayName: Fetch publisher
           inputs:
