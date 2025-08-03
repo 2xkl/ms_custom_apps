@@ -22,7 +22,7 @@ stages:
         value: "v5.1.4"
 
       - name: CONFIGURATION_YAML_PATH
-        value: "v5.1.4"
+        value: '$(System.DefaultWorkingDirectory)/APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml'
       - name: API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH
         value: '$(System.DefaultWorkingDirectory)/APIMConfig'
       - name: RESOURCE_GROUP_NAME
