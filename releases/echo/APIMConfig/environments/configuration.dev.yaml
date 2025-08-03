@@ -2,7 +2,7 @@ apis:
   - name: echo
     properties:
       apiRevision: 1
-      serviceUrl: "https://login.microsoftonline.com/16850073-4977-4869-9163-08e8d38eac81/oauth2"
+      serviceUrl: "10.1.1.33"
     diagnostics:
       - name: applicationinsights
         properties:
