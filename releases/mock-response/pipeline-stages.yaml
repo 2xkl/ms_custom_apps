@@ -15,7 +15,7 @@ parameters:
   #   default: false
 
 stages:
-      - template: pipeline-template.yml
+      - template: pipeline-template.yaml
         parameters:
           api: oAuth
           apimResourceGroupName: we-ir-rg-apicatalog
