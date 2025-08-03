@@ -75,7 +75,7 @@ function ChatResponse({ response }) {
 
 export default function Chat() {
   const [input, setInput] = useState("");
-  const [history, setHistory] = useState([]); // {question, answer}
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const apiUrl = process.env.REACT_APP_API_URL;
   async function handleSubmit(e) {

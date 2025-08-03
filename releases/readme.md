@@ -1,0 +1,1 @@
+tutaj powinny byc helm charty zawierajace serwisy z ktorych czyta argo

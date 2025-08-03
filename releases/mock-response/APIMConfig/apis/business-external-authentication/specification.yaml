@@ -1,0 +1,60 @@
+openapi: 3.0.1
+info:
+  title: Business External Authentication
+  version: '1.0'
+
+paths:
+  /token:
+    post:
+      summary: POST /token
+      operationId: post-token
+      responses:
+        '200':
+          description: 
+    options:
+      summary: OPTIONS /token
+      operationId: options-token
+      responses:
+        '200':
+          description: 
+  /v2.0/token:
+    options:
+      summary: OPTIONS /v2.0/token
+      operationId: options-v2-token
+      responses:
+        '200':
+          description: 
+    post:
+      summary: POST /v2.0/token
+      operationId: post-v2-token
+      responses:
+        '200':
+          description: 
+  /ping:
+    get:
+      summary: Am I alive?
+      description: Am I alive?
+      operationId: ping
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/text:
+              schema:
+                type: string
+              examples:
+                default:
+                  value:
+components:
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      name: Ocp-Apim-Subscription-Key
+      in: header
+    apiKeyQuery:
+      type: apiKey
+      name: subscription-key
+      in: query
+security:
+  - apiKeyHeader: [ ]
+  - apiKeyQuery: [ ]
