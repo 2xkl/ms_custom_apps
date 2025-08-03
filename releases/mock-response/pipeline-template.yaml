@@ -2,14 +2,6 @@ parameters:
 - name: stages
   type: object
   default: []
-- name: apimResourceGroupName
-  type: string
-- name: apiManagementServiceName
-  type: string
-- name: apimLogger
-  type: string
-- name: api
-  type: string
   
 
 stages:

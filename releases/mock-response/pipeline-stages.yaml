@@ -8,22 +8,10 @@ parameters:
     displayName: DEV
     type: boolean
     default: true
-  # - name: acc
-  #   displayName: ACC
-  #   type: boolean
-  #   default: false
-  # - name: prd
-  #   displayName: PRD
-  #   type: boolean
-  #   default: false
 
 stages:
       - template: pipeline-template.yaml
         parameters:
-          api: oAuth
-          apimResourceGroupName: we-ir-rg-apicatalog
-          apiManagementServiceName: we-ir-apim-apicatalog
-          apimLogger: we-ir-ai-monitoring
           stages:
             - ${{ if eq(parameters.dev, true) }}:
                 - name: "Deploy_to_Apim_v2_Dev"
@@ -31,15 +19,3 @@ stages:
                   ENVIRONMENT: DEV
                   servicePrincipal: "DEV Integration Platform"
                   subscriptionId: "315e574e-7153-4853-8cfe-fa416bb08a23"
-            # - ${{ if eq(parameters.acc, true) }}:
-            #     - name: "Deploy_to_Apim_v2_Acc"
-            #       environmentCode: acc
-            #       ENVIRONMENT: ACC
-            #       servicePrincipal: "ACC Integration Platform"
-            #       subscriptionId: "eabb50a7-999e-4422-8d15-914fd5e7a021"
-            # - ${{ if eq(parameters.prd, true) }}:
-            #     - name: "Deploy_to_Apim_v2_Prd"
-            #       environmentCode: prd
-            #       ENVIRONMENT: PRD
-            #       servicePrincipal: "PRD Integration Platform"
-            #       subscriptionId: "29d54a7c-6344-43b6-a628-0b0800596188"

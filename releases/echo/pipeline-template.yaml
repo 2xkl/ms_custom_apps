@@ -14,9 +14,9 @@ stages:
       - name: API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH
         value: 'APIMConfig'
       - name: RESOURCE_GROUP_NAME
-        value: 'z-rg-aks-dev'
+        value: 'z-rg-ingress-dev'
       - name: API_MANAGEMENT_SERVICE_NAME
-        value: 'apim-custom-2xkl'
+        value: 'apim-custom-oni'
       - name: APIM_LOGGER_NAME
         value: "appinsights-logger"
       - name: CONFIGURATION_YAML_PATH
