@@ -17,13 +17,26 @@ stages:
   - stage: '${{ stage.name }}'
     displayName: '${{ stage.name }} Deployment'
     variables:
-      apiops_release_version: "v5.1.4"
-      CONFIGURATION_YAML_PATH: '$(System.DefaultWorkingDirectory)/APIMConfig/${{ parameters.api }}/environments/configuration.${{ stage.environmentCode }}.yaml'
-      API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH: '$(System.DefaultWorkingDirectory)/APIMConfig/${{ parameters.api }}'
-      RESOURCE_GROUP_NAME : '${{ parameters.apimResourceGroupName }}-${{ stage.environmentCode }}'
-      API_MANAGEMENT_SERVICE_NAME : '${{ parameters.apiManagementServiceName }}-${{ stage.environmentCode }}'
-      ${{ if eq(parameters.apimLogger, 'we-ir-ai-int01') }}:
-        APIM_LOGGER_NAME: '${{ parameters.apimLogger }}-${{ stage.environmentCode }}'
+      - group: SEC_MS_ACR
+      - name: apiops_release_version
+        value: "v5.1.4"
+
+      - name: CONFIGURATION_YAML_PATH
+        value: "v5.1.4"
+      - name: API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH
+        value: '$(System.DefaultWorkingDirectory)/APIMConfig/${{ parameters.api }}'
+      - name: RESOURCE_GROUP_NAME
+        value: '${{ parameters.apimResourceGroupName }}-${{ stage.environmentCode }}'
+      - name: API_MANAGEMENT_SERVICE_NAME
+        value: '${{ parameters.apimResourceGroupName }}-${{ stage.environmentCode }}'
+      - name: APIM_LOGGER_NAME
+        value: "v5.1.4"
+      # CONFIGURATION_YAML_PATH: '$(System.DefaultWorkingDirectory)/APIMConfig/${{ parameters.api }}/environments/configuration.${{ stage.environmentCode }}.yaml'
+      # API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH: '$(System.DefaultWorkingDirectory)/APIMConfig/${{ parameters.api }}'
+      # RESOURCE_GROUP_NAME : '${{ parameters.apimResourceGroupName }}-${{ stage.environmentCode }}'
+      # API_MANAGEMENT_SERVICE_NAME : '${{ parameters.apiManagementServiceName }}-${{ stage.environmentCode }}'
+      # ${{ if eq(parameters.apimLogger, 'we-ir-ai-int01') }}:
+      #   APIM_LOGGER_NAME: '${{ parameters.apimLogger }}-${{ stage.environmentCode }}'
 
     jobs:
     - job: BuildAndPublish
@@ -42,34 +55,35 @@ stages:
               (Get-Content -Path "./APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml") -replace "/subscriptions/SUBSCRIPTION_ID/resourceGroups/RESOURCE_GROUP_NAME/providers/Microsoft.ApiManagement/service/APIM_NAME/loggers/APIM_LOGGER_NAME", "/subscriptions/${{ stage.subscriptionId }}/resourceGroups/${{ variables.RESOURCE_GROUP_NAME }}/providers/Microsoft.ApiManagement/service/${{ variables.API_MANAGEMENT_SERVICE_NAME }}/loggers/${{ variables.APIM_LOGGER_NAME }}" | Set-Content -Path "APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml"
               type APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml
 
-        # - task: AzureCLI@2
-        #   displayName: Set publishing variables
-        #   inputs:
-        #     azureSubscription: ${{ stage.servicePrincipal }}
-        #     scriptType: pscore
-        #     scriptLocation: inlineScript
-        #     inlineScript: |
-        #       Set-StrictMode -Version Latest
-        #       $ErrorActionPreference = "Stop"
-        #       $VerbosePreference = "Continue"
-        #       $InformationPreference = "Continue"
-        #       $azureAccessToken = az account get-access-token --query "accessToken" --output tsv
-        #       Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_BEARER_TOKEN]$azureAccessToken"
-        #       Write-Host "Bearer token retrieved and set."
+        - task: PowerShell@2
+          displayName: Set publishing variables
+          inputs:
+            targetType: inline
+            script: |
+              Set-StrictMode -Version Latest
+              $ErrorActionPreference = "Stop"
+              $VerbosePreference = "Continue"
+              $InformationPreference = "Continue"
+              az login --service-principal --username "$SP_USERNAME" --password "$SP_PASSWORD" --tenant "$TENANT_ID"
+              $azureAccessToken = az account get-access-token --query "accessToken" --output tsv
+              Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_BEARER_TOKEN]$azureAccessToken"
+              Write-Host "Bearer token retrieved and set."
 
-        #       $azureClientId = $env:servicePrincipalId
-        #       Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_CLIENT_ID]$azureClientId"
-        #       Write-Host "Client ID retrieved and set."
+              $azureClientId = $env:servicePrincipalId
+              Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_CLIENT_ID]$azureClientId"
+              Write-Host "Client ID retrieved and set."
 
-        #       $azureClientSecret = $env:servicePrincipalKey
-        #       Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_CLIENT_SECRET]$azureClientSecret"
-        #       Write-Host "Client secret retrieved and set."
+              $azureClientSecret = $env:servicePrincipalKey
+              Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_CLIENT_SECRET]$azureClientSecret"
+              Write-Host "Client secret retrieved and set."
 
-        #       $azureTenantId = $env:tenantId
-        #       Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_TENANT_ID]$azureTenantId"
-        #       Write-Host "Tenant ID retrieved and set."
-        #     addSpnToEnvironment: true
-        #     failOnStandardError: true
+              $azureTenantId = $env:tenantId
+              Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_TENANT_ID]$azureTenantId"
+              Write-Host "Tenant ID retrieved and set."
+            env:
+              SP_USERNAME: $(ARMCLIENTID)
+              SP_PASSWORD: $(ARMCLIENTSECRET)
+              TENANT_ID: $(ARMTENANTID)
 
         # # replacetokens@3 task will need to be installed to use
         # - ${{ if ne(variables.CONFIGURATION_YAML_PATH, '') }}:
