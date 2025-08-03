@@ -3,9 +3,9 @@
       "apiRevision": "1",
       "authenticationSettings": {},
       "description": "",
-      "displayName": "Business External Authentication",
+      "displayName": "Mock Response",
       "isCurrent": true,
-      "path": "external/oauth2",
+      "path": "mock",
       "protocols": [
         "https"
       ],
