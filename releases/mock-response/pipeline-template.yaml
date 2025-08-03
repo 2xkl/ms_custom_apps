@@ -29,7 +29,7 @@ stages:
     - job: BuildAndPublish
       displayName: 'Build and Publish'
       pool:
-        vmImage: 'windows-latest'
+        name: Default
       steps:
 
         - task: PowerShell@2
