@@ -15,8 +15,7 @@ parameters:
   #   default: false
 
 stages:
-  - ${{ if eq(parameters.apim, true) }}:
-      - template: apim-template.yml
+      - template: pipeline-template.yml
         parameters:
           api: oAuth
           apimResourceGroupName: we-ir-rg-apicatalog
