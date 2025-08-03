@@ -2,7 +2,7 @@ apis:
   - name: echo
     properties:
       apiRevision: 1
-      serviceUrl: "http://10.1.1.33"
+      serviceUrl: "http://SERVICE_IP"
     diagnostics:
       - name: applicationinsights
         properties:
