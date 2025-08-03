@@ -85,39 +85,39 @@ stages:
         #         tokenPrefix: "{#"
         #         tokenSuffix: "#}"
 
-        # - task: PowerShell@2
-        #   displayName: Fetch publisher
-        #   inputs:
-        #     targetType: "inline"
-        #     script: |
-        #       # Debug: Print variables
-        #       Write-Host "APIOps Release Version: $(apiops_release_version)"
-        #       Write-Host "Operating System: $(Agent.OS)"
+        - task: PowerShell@2
+          displayName: Fetch publisher
+          inputs:
+            targetType: "inline"
+            script: |
+              # Debug: Print variables
+              Write-Host "APIOps Release Version: $(apiops_release_version)"
+              Write-Host "Operating System: $(Agent.OS)"
               
-        #       Set-StrictMode -Version Latest
-        #       $ErrorActionPreference = "Stop"
-        #       $VerbosePreference = "Continue"
-        #       $InformationPreference = "Continue"
+              Set-StrictMode -Version Latest
+              $ErrorActionPreference = "Stop"
+              $VerbosePreference = "Continue"
+              $InformationPreference = "Continue"
 
-        #       Write-Information "Downloading publisher..."
-        #       $publisherFileName = "$(Agent.OS)" -like "*win*" ? "publisher.win-x64.exe" : "publisher.linux-x64"
-        #       $uri = "https://github.com/Azure/apiops/releases/download/$(apiops_release_version)/$publisherFileName"
-        #       Write-Host "Constructed Download URI: $uri"
-        #       $destinationFilePath = Join-Path "$(Agent.TempDirectory)" "publisher.exe"
-        #       Invoke-WebRequest -Uri "$uri" -OutFile "$destinationFilePath"
+              Write-Information "Downloading publisher..."
+              $publisherFileName = "$(Agent.OS)" -like "*win*" ? "publisher.win-x64.exe" : "publisher.linux-x64"
+              $uri = "https://github.com/Azure/apiops/releases/download/$(apiops_release_version)/$publisherFileName"
+              Write-Host "Constructed Download URI: $uri"
+              $destinationFilePath = Join-Path "$(Agent.TempDirectory)" "publisher.exe"
+              Invoke-WebRequest -Uri "$uri" -OutFile "$destinationFilePath"
 
-        #       if ("$(Agent.OS)" -like "*linux*")
-        #       {
-        #         Write-Information "Setting file permissions..."
-        #         & chmod +x "$destinationFilePath"
-        #         if ($LASTEXITCODE -ne 0) { throw "Setting file permissions failed."}
-        #       }
-        #       Write-Host "PublisherFileName: $publisherFileName"
-        #       Write-Host "DestinationFile: $destinationFilePath"
-        #       Write-Host "##vso[task.setvariable variable=PUBLISHER_FILE_PATH]$destinationFilePath"
-        #       Write-Information "Execution complete."
-        #     failOnStderr: true
-        #     pwsh: true
+              if ("$(Agent.OS)" -like "*linux*")
+              {
+                Write-Information "Setting file permissions..."
+                & chmod +x "$destinationFilePath"
+                if ($LASTEXITCODE -ne 0) { throw "Setting file permissions failed."}
+              }
+              Write-Host "PublisherFileName: $publisherFileName"
+              Write-Host "DestinationFile: $destinationFilePath"
+              Write-Host "##vso[task.setvariable variable=PUBLISHER_FILE_PATH]$destinationFilePath"
+              Write-Information "Execution complete."
+            failOnStderr: true
+            pwsh: true
 
         # - task: PowerShell@2
         #   displayName: Run publisher for ${{ stage.environmentCode}} environment
