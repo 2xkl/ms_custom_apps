@@ -144,6 +144,7 @@ stages:
           displayName: Run publisher for ${{ stage.environmentCode}} environment
           inputs:
             targetType: "inline"
+            workingDirectory: releases/mock-response
             script: |
 
               Set-StrictMode -Version Latest
