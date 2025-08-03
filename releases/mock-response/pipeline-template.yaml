@@ -20,9 +20,6 @@ stages:
       - group: SEC_MS
       - name: apiops_release_version
         value: "v5.1.4"
-
-      # - name: CONFIGURATION_YAML_PATH
-      #   value: '$(System.DefaultWorkingDirectory)/APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml'
       - name: API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH
         value: 'APIMConfig'
       - name: RESOURCE_GROUP_NAME
@@ -85,21 +82,6 @@ stages:
             SP_USERNAME: $(ARMCLIENTID)
             SP_PASSWORD: $(ARMCLIENTSECRET)
             TENANT_ID: $(ARMTENANTID)
-
-
-        # # replacetokens@3 task will need to be installed to use
-        # - ${{ if ne(variables.CONFIGURATION_YAML_PATH, '') }}:
-        #     - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-        #       displayName: "Perform namevalue secret substitution in ${{ variables.CONFIGURATION_YAML_PATH }}"
-        #       inputs:
-        #         targetFiles: ${{ variables.CONFIGURATION_YAML_PATH }}
-        #         encoding: "auto"
-        #         writeBOM: true
-        #         verbosity: "off"
-        #         actionOnMissing: "warn"
-        #         keepToken: false
-        #         tokenPrefix: "{#"
-        #         tokenSuffix: "#}"
 
         - task: PowerShell@2
           displayName: Fetch publisher

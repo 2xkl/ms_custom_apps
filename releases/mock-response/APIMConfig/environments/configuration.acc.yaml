@@ -1,9 +1,0 @@
-apis:
-  - name: business-external-authentication
-    properties:
-      apiRevision: 1
-      serviceUrl: "https://login.microsoftonline.com/16850073-4977-4869-9163-08e8d38eac81/oauth2"
-    diagnostics:
-      - name: applicationinsights
-        properties:
-          loggerId: "/subscriptions/eabb50a7-999e-4422-8d15-914fd5e7a021/resourceGroups/we-ir-rg-apicatalog-acc/providers/Microsoft.ApiManagement/service/we-ir-apim-apicatalog-acc/loggers/we-ir-logger-apicatalog-acc"

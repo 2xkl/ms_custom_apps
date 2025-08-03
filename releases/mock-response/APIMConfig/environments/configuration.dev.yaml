@@ -1,5 +1,5 @@
 apis:
-  - name: business-external-authentication
+  - name: mock-response
     properties:
       apiRevision: 1
       serviceUrl: "https://login.microsoftonline.com/16850073-4977-4869-9163-08e8d38eac81/oauth2"
