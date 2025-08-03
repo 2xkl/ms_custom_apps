@@ -32,7 +32,7 @@ stages:
       - name: APIM_LOGGER_NAME
         value: "v5.1.4"
       - name: CONFIGURATION_YAML_PATH
-        value: '$(System.DefaultWorkingDirectory)/APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml'
+        value: './APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml'
       # CONFIGURATION_YAML_PATH: '$(System.DefaultWorkingDirectory)/APIMConfig/${{ parameters.api }}/environments/configuration.${{ stage.environmentCode }}.yaml'
       # API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH: '$(System.DefaultWorkingDirectory)/APIMConfig/${{ parameters.api }}'
       # RESOURCE_GROUP_NAME : '${{ parameters.apimResourceGroupName }}-${{ stage.environmentCode }}'
