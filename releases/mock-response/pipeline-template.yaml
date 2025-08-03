@@ -30,15 +30,9 @@ stages:
       - name: API_MANAGEMENT_SERVICE_NAME
         value: 'apim-custom-2xkl'
       - name: APIM_LOGGER_NAME
-        value: "v5.1.4"
+        value: "appinsights-logger"
       - name: CONFIGURATION_YAML_PATH
         value: './APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml'
-      # CONFIGURATION_YAML_PATH: '$(System.DefaultWorkingDirectory)/APIMConfig/${{ parameters.api }}/environments/configuration.${{ stage.environmentCode }}.yaml'
-      # API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH: '$(System.DefaultWorkingDirectory)/APIMConfig/${{ parameters.api }}'
-      # RESOURCE_GROUP_NAME : '${{ parameters.apimResourceGroupName }}-${{ stage.environmentCode }}'
-      # API_MANAGEMENT_SERVICE_NAME : '${{ parameters.apiManagementServiceName }}-${{ stage.environmentCode }}'
-      # ${{ if eq(parameters.apimLogger, 'we-ir-ai-int01') }}:
-      #   APIM_LOGGER_NAME: '${{ parameters.apimLogger }}-${{ stage.environmentCode }}'
 
     jobs:
     - job: BuildAndPublish
