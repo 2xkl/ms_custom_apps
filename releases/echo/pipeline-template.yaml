@@ -117,7 +117,7 @@ stages:
             targetType: inline
             workingDirectory: releases/echo
             script: |
-              $externalIp = "$(getServiceIp.ECHO_SERVICE_IP)"
+              $externalIp = "$(ECHO_SERVICE_IP)"
               Write-Host "External IP from previous step: $externalIp"
 
               (Get-Content -Path "./APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml") -replace "SERVICE_IP", "$externalIp" | Set-Content -Path "APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml"
