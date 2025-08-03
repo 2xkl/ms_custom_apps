@@ -79,6 +79,39 @@ stages:
               kubectl apply -f app/deployment.yaml
 
         - task: PowerShell@2
+          displayName: "Wait for Service External IP"
+          inputs:
+            targetType: inline
+            script: |
+              $serviceName = "echo-service"
+              $namespace = "default"
+              $timeoutMinutes = 5
+              $intervalSeconds = 10
+              $elapsed = 0
+              $externalIp = ""
+
+              Write-Host "Waiting for external IP of service '$serviceName' in namespace '$namespace'..."
+
+              while ($elapsed -lt ($timeoutMinutes * 60)) {
+                  $externalIp = kubectl get svc $serviceName -n $namespace -o jsonpath="{.status.loadBalancer.ingress[0].ip}"
+                  if (![string]::IsNullOrEmpty($externalIp)) {
+                      Write-Host "External IP acquired: $externalIp"
+                      break
+                  }
+                  Start-Sleep -Seconds $intervalSeconds
+                  $elapsed += $intervalSeconds
+                  Write-Host "Still waiting... elapsed: $elapsed seconds"
+              }
+
+              if ([string]::IsNullOrEmpty($externalIp)) {
+                  Write-Error "Timeout waiting for external IP."
+                  exit 1
+              }
+
+              # Set pipeline variable
+              Write-Host "##vso[task.setvariable variable=ECHO_SERVICE_IP;isOutput=true]$externalIp"
+
+        - task: PowerShell@2
           displayName: Set specification
           inputs:
             targetType: inline
