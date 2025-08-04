@@ -7,7 +7,7 @@
     "description": "",
     "displayName": "Viewer",
     "isCurrent": true,
-    "path": "viewer",
+    "path": "view",
     "protocols": [
       "http"
     ],
