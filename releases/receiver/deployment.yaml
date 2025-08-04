@@ -20,7 +20,7 @@ data:
   SERVICEBUS_NAMESPACE: "sb-apps-cust-dev.servicebus.windows.net"
   SERVICEBUS_TOPIC_NAME: "events"
   SERVICEBUS_SUBSCRIPTION_NAME: "mails"
-  INSPECTOR_URL: "http://10.1.2.4/inspector/v1/inspect"
+  INSPECTOR_URL: "http://10.1.1.34/inspect"
   STORAGE_ACCOUNT_NAME: "storappsdevasd213"
   TABLE_NAME: "email"
 ---
