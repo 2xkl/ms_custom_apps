@@ -1,25 +1,31 @@
 from fastapi import FastAPI, HTTPException
 from azure.data.tables import TableServiceClient
 from azure.identity import DefaultAzureCredential
-from datetime import datetime
-import os
 import logging
 
 app = FastAPI()
-logging.basicConfig(level=logging.INFO)
 
-# Environment variable must contain the full table storage account name (e.g., "myaccount.table.core.windows.net")
-STORAGE_ACCOUNT_NAME = os.getenv("STORAGE_ACCOUNT_NAME")  # e.g., https://youraccount.table.core.windows.net
-TABLE_NAME = os.getenv("TABLE_NAME", "emails")
+# Włącz maksymalne logowanie
+logging.basicConfig(level=logging.DEBUG)
 
-print("STORAGE_ACCOUNT_NAME =", STORAGE_ACCOUNT_NAME)
+STORAGE_ACCOUNT_NAME = "storappsdevasd213"
+TABLE_NAME = "emails"
 
-if not STORAGE_ACCOUNT_NAME:
-    raise RuntimeError("Missing STORAGE_ACCOUNT_NAME environment variable.")
-
-# Use DefaultAzureCredential (supports workload identity in AKS)
 storage_url = f"https://{STORAGE_ACCOUNT_NAME}.table.core.windows.net"
-table_service = TableServiceClient(endpoint=storage_url, credential=credential)
+logging.debug(f"Storage URL: {storage_url}")
+
+# Inicjalizacja DefaultAzureCredential i sprawdzenie tokenu
+credential = DefaultAzureCredential()
+
+try:
+    token = credential.get_token("https://storage.azure.com/.default")
+    logging.debug(f"Access token acquired successfully: {token.token[:10]}...")
+except Exception as e:
+    logging.error(f"Failed to acquire token: {e}")
+    raise RuntimeError(f"Credential error: {e}")
+
+# Inicjalizacja TableServiceClient z poprawnym parametrem account_url
+table_service = TableServiceClient(account_url=storage_url, credential=credential)
 table_client = table_service.get_table_client(TABLE_NAME)
 
 @app.get("/ping")
@@ -34,6 +40,7 @@ def get_all_emails():
         result = []
 
         for entity in entities:
+            logging.debug(f"Entity found: {entity}")
             result.append({
                 "sender": entity.get("sender"),
                 "message": entity.get("message"),
