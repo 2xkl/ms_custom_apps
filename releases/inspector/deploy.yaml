@@ -1,0 +1,41 @@
+trigger: none
+
+name: deploy-inspector-$(Build.BuildId)
+
+resources:
+  pipelines:
+    - pipeline: inspectorBuild
+      source: inspector
+      trigger:
+        branches:
+          include:
+            - main
+
+pool:
+  name: Default
+
+stages:
+  - stage: Deploy
+    displayName: Deploy Inspector App
+    jobs:
+      - job: DownloadAndDeploy
+        displayName: Download Artifact and Deploy
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              buildType: 'specific'
+              project: '$(System.TeamProject)'
+              pipeline: 'inspector'  # <-- nazwa pipeline'u budującego
+              runVersion: 'latest'
+              artifact: 'inspector-artifacts'
+              path: '$(Build.ArtifactStagingDirectory)/inspector-artifacts'
+
+          - script: |
+              echo "📦 Artifact contents:"
+              cat $(Build.ArtifactStagingDirectory)/inspector-artifacts/image
+            displayName: Show image from artifact
+
+          # (Opcjonalnie) Apply deployment spec
+          # - script: |
+          #     kubectl apply -f $(Build.ArtifactStagingDirectory)/inspector-artifacts/spec.yaml
+          #   displayName: Deploy to AKS
