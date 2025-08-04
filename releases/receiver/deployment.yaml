@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: receiver
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: receiver-sa
+  namespace: receiver
+  annotations:
+    azure.workload.identity/client-id: UMI_CLIENT_ID
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: receiver-config
+  namespace: receiver
+data:
+  SERVICEBUS_NAMESPACE: "sb-apps-cust-dev.servicebus.windows.net"
+  SERVICEBUS_TOPIC_NAME: "events"
+  SERVICEBUS_SUBSCRIPTION_NAME: "mails"
+  INSPECTOR_URL: "http://10.1.2.4/inspector/v1/inspect"
+  STORAGE_ACCOUNT_NAME: "storappsdevasd213"
+  TABLE_NAME: "email"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: receiver
+  namespace: receiver
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: receiver
+  template:
+    metadata:
+      labels:
+        app: receiver
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: receiver-sa
+      imagePullSecrets:
+        - name: acr-secret
+      containers:
+        - name: receiver
+          image: IMAGE_NAME
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: receiver-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: receiver
+  namespace: receiver
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+  labels:
+    app: receiver
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 8000
+  selector:
+    app: receiver
