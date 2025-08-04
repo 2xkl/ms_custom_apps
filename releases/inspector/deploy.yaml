@@ -25,7 +25,7 @@ stages:
             inputs:
               buildType: 'specific'
               project: '$(System.TeamProject)'
-              pipeline: 'inspector'  # <-- nazwa pipeline'u budującego
+              pipeline: 'Build app inspector'  # <-- nazwa pipeline'u budującego
               runVersion: 'latest'
               artifact: 'inspector-artifacts'
               path: '$(Build.ArtifactStagingDirectory)/inspector-artifacts'
