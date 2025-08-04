@@ -2,14 +2,14 @@ trigger: none
 
 name: deploy-inspector-$(Build.BuildId)
 
-resources:
-  pipelines:
-    - pipeline: "Build app inspector"
-      source: inspector
-      trigger:
-        branches:
-          include:
-            - main
+# resources:
+#   pipelines:
+#     - pipeline: "Build app inspector"
+#       source: inspector
+#       trigger:
+#         branches:
+#           include:
+#             - main
 
 pool:
   name: Default
