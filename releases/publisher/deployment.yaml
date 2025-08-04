@@ -17,7 +17,7 @@ metadata:
   name: publisher-config
   namespace: publisher
 data:
-  SERVICE_BUS_NAMESPACE: "sb-apps-cust-dev.servicebus.windows.net"
+  SERVICEBUS_NAMESPACE: "sb-apps-cust-dev.servicebus.windows.net"
   SERVICEBUS_TOPIC_NAME: "events"
 ---
 apiVersion: apps/v1
