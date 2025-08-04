@@ -13,13 +13,6 @@ paths:
       responses:
         '200':
           description: ''
-  /emails:
-    get:
-      summary: GET
-      operationId: gem
-      responses:
-        '200':
-          description: ''
 components:
   securitySchemes:
     apiKeyHeader:
