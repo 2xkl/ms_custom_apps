@@ -49,6 +49,8 @@ stages:
                 docker push $ACR_NAME.azurecr.io/inspector:$(Build.BuildId)
                 mkdir inspector-artifacts
                 echo $ACR_NAME.azurecr.io/chat:$(Build.BuildId) > inspector-artifacts/image
+                ls
+                pwd
             env:
               ACR_NAME: $(ACR_NAME)
 
