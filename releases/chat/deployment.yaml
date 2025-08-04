@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: chat
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: chat-sa
+  namespace: chat
+  annotations:
+    azure.workload.identity/client-id: UMI_CLIENT_ID
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chat-config
+  namespace: chat
+data:
+  AZURE_KEYVAULT_NAME: "z-kv-apps-o-dev"
+  AZURE_OPENAI_DEPLOYMENT: "gpt-35-turbo"
+  AZURE_OPENAI_API_VERSION: "2024-05-01-preview"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat
+  namespace: chat
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: chat
+  template:
+    metadata:
+      labels:
+        app: chat
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: chat-sa
+      imagePullSecrets:
+        - name: acr-secret
+      containers:
+        - name: chat
+          image: IMAGE_NAME
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: chat-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat
+  namespace: chat
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+  labels:
+    app: chat
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 8000
+  selector:
+    app: chat

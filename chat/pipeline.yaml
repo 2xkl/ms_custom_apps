@@ -47,6 +47,17 @@ stages:
               targetType: inline
               script: |
                 docker push $ACR_NAME.azurecr.io/chat:$(Build.BuildId)
-                echo $ACR_NAME.azurecr.io/chat:$(Build.BuildId)
+                mkdir -p $(Build.ArtifactStagingDirectory)/chat-artifacts
+                echo "$ACR_NAME.azurecr.io/chat:$(Build.BuildId)" > $(Build.ArtifactStagingDirectory)/chat-artifacts/image
+
+                ls -l $(Build.ArtifactStagingDirectory)/chat-artifacts
+                echo "Wrote image reference to artifact staging directory"
             env:
               ACR_NAME: $(ACR_NAME)
+
+          - task: PublishBuildArtifacts@1
+            displayName: Publish build artifacts
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/chat-artifacts'
+              ArtifactName: 'chat-artifacts'
+              publishLocation: 'Container'
