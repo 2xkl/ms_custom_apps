@@ -43,7 +43,7 @@ spec:
         - name: viewer
           image: IMAGE_NAME
           ports:
-            - containerPort: 8000
+            - containerPort: 80
           envFrom:
             - configMapRef:
                 name: viewer-config
@@ -62,6 +62,6 @@ spec:
   type: LoadBalancer
   ports:
     - port: 80
-      targetPort: 8000
+      targetPort: 80
   selector:
     app: viewer
