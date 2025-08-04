@@ -60,20 +60,11 @@ stages:
                 --password "$env:SP_PASSWORD" `
                 --tenant "$env:TENANT_ID"
 
-              # Get access token
               $azureAccessToken = az account get-access-token --query "accessToken" --output tsv
               Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_BEARER_TOKEN]$azureAccessToken"
-              Write-Host "Bearer token retrieved and set."
-
-              # Set remaining variables from environment
               Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_CLIENT_ID]$env:SP_USERNAME"
-              Write-Host "Client ID retrieved and set."
-
               Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_CLIENT_SECRET]$env:SP_PASSWORD"
-              Write-Host "Client secret retrieved and set."
-
               Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_TENANT_ID]$env:TENANT_ID"
-              Write-Host "Tenant ID retrieved and set."
           env:
             SP_USERNAME: $(ARMCLIENTID)
             SP_PASSWORD: $(ARMCLIENTSECRET)
