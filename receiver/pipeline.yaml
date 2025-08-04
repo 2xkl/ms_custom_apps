@@ -1,0 +1,63 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - receiver/**
+
+name: receiver:$(Build.BuildId)
+
+pool:
+  name: Default
+
+variables:
+  - group: SEC_MS_ACR
+
+stages:
+  - stage: BuildAndPush
+    displayName: Build and Push Docker Image to ACR
+    jobs:
+      - job: DockerBuildPush
+        displayName: Build and Push
+        steps:
+          - task: Bash@3
+            displayName: Login to Azure Container Registry
+            inputs:
+              targetType: inline
+              script: |
+                echo "Logging in to ACR..."
+                echo $ACR_PASSWORD | docker login $ACR_NAME.azurecr.io --username $ACR_USERNAME --password-stdin
+            env:
+              ACR_NAME: $(ACR_NAME)
+              ACR_USERNAME: $(ACR_USERNAME)
+              ACR_PASSWORD: $(ACR_PASSWORD)
+          
+          - task: Bash@3
+            displayName: Build Docker Image
+            inputs:
+              targetType: inline
+              workingDirectory: receiver
+              script: |
+                docker build -t $ACR_NAME.azurecr.io/receiver:$(Build.BuildId) .
+          
+          - task: Bash@3
+            displayName: Push Docker Image
+            inputs:
+              targetType: inline
+              script: |
+                docker push $ACR_NAME.azurecr.io/receiver:$(Build.BuildId)
+                mkdir -p $(Build.ArtifactStagingDirectory)/receiver-artifacts
+                echo "$ACR_NAME.azurecr.io/receiver:$(Build.BuildId)" > $(Build.ArtifactStagingDirectory)/receiver-artifacts/image
+
+                ls -l $(Build.ArtifactStagingDirectory)/receiver-artifacts
+                echo "Wrote image reference to artifact staging directory"
+            env:
+              ACR_NAME: $(ACR_NAME)
+
+          - task: PublishBuildArtifacts@1
+            displayName: Publish build artifacts
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/receiver-artifacts'
+              ArtifactName: 'receiver-artifacts'
+              publishLocation: 'Container'
