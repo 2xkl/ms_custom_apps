@@ -1,0 +1,10 @@
+apis:
+  - name: publisher-v1
+    properties:
+      apiRevision: 1
+      apiVersionSetId: "/subscriptions/315e574e-7153-4853-8cfe-fa416bb08a23/resourceGroups/z-rg-aks-dev/providers/Microsoft.ApiManagement/service/apim-custom-2xkl/apiVersionSets/publisher"
+      serviceUrl: "http://SERVICE_IP"
+    diagnostics:
+      - name: applicationinsights
+        properties:
+          loggerId: "/subscriptions/315e574e-7153-4853-8cfe-fa416bb08a23/resourceGroups/z-rg-aks-dev/providers/Microsoft.ApiManagement/service/apim-custom-2xkl/loggers/appinsights-logger"

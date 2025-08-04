@@ -25,7 +25,7 @@ class Payload(BaseModel):
 async def ping():
     return {"status": "ok"}
 
-@app.post("/publish")
+@app.post("/message")
 async def publish_message(payload: Payload, request: Request):
     try:
         logging.info(f"Received message from {payload.sender}")

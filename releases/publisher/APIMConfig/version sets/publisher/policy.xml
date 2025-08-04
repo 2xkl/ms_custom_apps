@@ -1,0 +1,7 @@
+<policies>
+	<inbound />
+	<backend>
+		<forward-request />
+	</backend>
+	<outbound />
+</policies>
