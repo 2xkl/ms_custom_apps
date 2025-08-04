@@ -4,7 +4,7 @@ name: deploy-inspector-$(Build.BuildId)
 
 resources:
   pipelines:
-    - pipeline: inspectorBuild
+    - pipeline: "Build app inspector"
       source: inspector
       trigger:
         branches:
