@@ -33,10 +33,8 @@ async def publish_message(payload: Payload, request: Request):
         message = {
             "sender": payload.sender,
             "message": payload.message,
-            "source_ip": request.client.host,
         }
 
-        # Send to topic
         with bus_client:
             sender = bus_client.get_topic_sender(topic_name=TOPIC_NAME)
             with sender:
