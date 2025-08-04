@@ -12,29 +12,43 @@ metadata:
     azure.workload.identity/client-id: UMI_CLIENT_ID
 ---
 apiVersion: v1
-kind: Pod
+kind: ConfigMap
+metadata:
+  name: inspector-config
+  namespace: inspector
+data:
+  AZURE_KEYVAULT_NAME: "z-kv-apps-o-dev"
+  AZURE_OPENAI_DEPLOYMENT: "gpt-35-turbo"
+  AZURE_OPENAI_API_VERSION: "2024-05-01-preview"
+---
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: inspector
   namespace: inspector
-  labels:
-    app: inspector
-    azure.workload.identity/use: "true"
 spec:
-  serviceAccountName: inspector-sa
-  imagePullSecrets:
-    - name: acr-secret
-  containers:
-    - name: inspector
-      image: IMAGE_NAME
-      ports:
-        - containerPort: 8000
-      env:
-        - name: AZURE_KEYVAULT_NAME
-          value: "z-kv-apps-o-dev"
-        - name: AZURE_OPENAI_DEPLOYMENT
-          value: "gpt-35-turbo"
-        - name: AZURE_OPENAI_API_VERSION
-          value: "2024-05-01-preview"
+  replicas: 2
+  selector:
+    matchLabels:
+      app: inspector
+  template:
+    metadata:
+      labels:
+        app: inspector
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: inspector-sa
+      imagePullSecrets:
+        - name: acr-secret
+      containers:
+        - name: inspector
+          image: IMAGE_NAME
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: inspector-config
+
 ---
 apiVersion: v1
 kind: Service
@@ -48,7 +62,7 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 80
-    targetPort: 8000
+    - port: 80
+      targetPort: 8000
   selector:
     app: inspector
