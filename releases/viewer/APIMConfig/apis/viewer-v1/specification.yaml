@@ -1,15 +1,23 @@
 openapi: 3.0.1
 info:
-  title: publisher
+  title: Viewer
   description: ''
-  version: '1.0'
+  version: v1
 servers:
-  - url: http://apim-custom-onibxl.azure-api.net/publisher
+  - url: http://apim-custom-onibxl.azure-api.net/viewer/v1
 paths:
   /ping:
     get:
       summary: GET
+      description: GET
       operationId: get
+      responses:
+        '200':
+          description: ''
+  /emails:
+    get:
+      summary: emails
+      operationId: emails
       responses:
         '200':
           description: ''
