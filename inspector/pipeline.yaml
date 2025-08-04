@@ -47,7 +47,14 @@ stages:
               targetType: inline
               script: |
                 docker push $ACR_NAME.azurecr.io/inspector:$(Build.BuildId)
-                mkdir artifact
-                echo $ACR_NAME.azurecr.io/chat:$(Build.BuildId) > artifact/image
+                mkdir inspector-artifacts
+                echo $ACR_NAME.azurecr.io/chat:$(Build.BuildId) > inspector-artifacts/image
             env:
               ACR_NAME: $(ACR_NAME)
+
+          - task: PublishBuildArtifacts@1
+            displayName: Publish build artifacts
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/inspector-artifacts'
+              ArtifactName: 'inspector-artifacts'
+              publishLocation: 'Container'
