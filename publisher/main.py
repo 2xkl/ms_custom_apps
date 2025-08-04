@@ -1,16 +1,21 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
-import os
+from azure.identity import DefaultAzureCredential
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
-import json
+import os
+import logging
 
 app = FastAPI()
+logging.basicConfig(level=logging.INFO)
 
-SERVICEBUS_CONNECTION_STR = os.getenv("SERVICEBUS_CONNECTION_STR")
-TOPIC_NAME = os.getenv("SERVICEBUS_TOPIC_NAME")
+SERVICE_BUS_NAMESPACE = os.getenv("SERVICEBUS_NAMESPACE")
+TOPIC_NAME = os.getenv("SERVICEBUS_TOPIC_NAME", "events")
 
-if not SERVICEBUS_CONNECTION_STR or not TOPIC_NAME:
-    raise RuntimeError("Missing SERVICEBUS_CONNECTION_STR or SERVICEBUS_TOPIC_NAME environment variables")
+if not SERVICE_BUS_NAMESPACE:
+    raise RuntimeError("Missing SERVICEBUS_NAMESPACE environment variable.")
+
+credential = DefaultAzureCredential()
+bus_client = ServiceBusClient(fully_qualified_namespace=SERVICE_BUS_NAMESPACE, credential=credential)
 
 class Payload(BaseModel):
     sender: str
@@ -21,15 +26,25 @@ async def ping():
     return {"status": "ok"}
 
 @app.post("/publish")
-async def publish_message(payload: Payload):
+async def publish_message(payload: Payload, request: Request):
     try:
-        with ServiceBusClient.from_connection_string(SERVICEBUS_CONNECTION_STR) as client:
-            sender = client.get_topic_sender(topic_name=TOPIC_NAME)
-            with sender:
-                body = json.dumps(payload.dict())
-                msg = ServiceBusMessage(body)
-                sender.send_messages(msg)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to send message: {e}")
+        logging.info(f"Received message from {payload.sender}")
 
-    return {"status": "sent"}
+        message = {
+            "sender": payload.sender,
+            "message": payload.message,
+            "source_ip": request.client.host,
+        }
+
+        # Send to topic
+        with bus_client:
+            sender = bus_client.get_topic_sender(topic_name=TOPIC_NAME)
+            with sender:
+                sb_message = ServiceBusMessage(str(message))
+                sender.send_messages(sb_message)
+
+        return {"status": "sent", "details": message}
+
+    except Exception as e:
+        logging.exception("Failed to publish message")
+        raise HTTPException(status_code=500, detail=str(e))
