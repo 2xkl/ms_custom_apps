@@ -6,28 +6,23 @@ from azure.keyvault.secrets import SecretClient
 import os
 import json
 
-# Konfiguracja Key Vault
-key_vault_name = os.getenv("AZURE_KEYVAULT_NAME")  # np. zdefiniowane jako zmienna środowiskowa lub przez ConfigMap
+key_vault_name = os.getenv("AZURE_KEYVAULT_NAME")
 kv_uri = f"https://{key_vault_name}.vault.azure.net"
 
-# Autoryzacja za pomocą workload identity
 credential = DefaultAzureCredential()
 secret_client = SecretClient(vault_url=kv_uri, credential=credential)
 
-# Pobierz dane z Key Vault
 subscription_key = secret_client.get_secret("OAIKEY").value
 endpoint = secret_client.get_secret("OAIENDPOINT").value
-deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT")  # Zakładamy, że deployment jest stały i ustawiony jako env
-api_version = os.getenv("AZURE_OPENAI_API_VERSION", "2024-05-01-preview")  # Można też wrzucić do KV
+deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT")
+api_version = os.getenv("AZURE_OPENAI_API_VERSION", "2024-05-01-preview")
 
-# Inicjalizacja klienta OpenAI
 client = AzureOpenAI(
     api_version=api_version,
     azure_endpoint=endpoint,
     api_key=subscription_key,
 )
 
-# FastAPI app
 app = FastAPI()
 
 class InspectRequest(BaseModel):
