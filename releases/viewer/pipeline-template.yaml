@@ -160,7 +160,7 @@ stages:
             pwsh: true
 
         - task: PowerShell@2
-          displayName: Run viewer for ${{ stage.environmentCode}} environment
+          displayName: Run publisher for ${{ stage.environmentCode}} environment
           inputs:
             targetType: "inline"
             workingDirectory: releases/viewer
@@ -173,8 +173,8 @@ stages:
               $VerbosePreference = "Continue"
               $InformationPreference = "Continue"
 
-              & "$(viewer_FILE_PATH)"                
-              if ($LASTEXITCODE -ne 0) { throw "Running viewer failed."}
+              & "$(PUBLISHER_FILE_PATH)"                
+              if ($LASTEXITCODE -ne 0) { throw "Running publisher failed."}
 
               Write-Information "Execution complete."
             failOnStderr: true
