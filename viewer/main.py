@@ -20,7 +20,7 @@ if not STORAGE_ACCOUNT_NAME:
 # Use DefaultAzureCredential (supports workload identity in AKS)
 storage_url = f"https://{STORAGE_ACCOUNT_NAME}.table.core.windows.net"
 table_service = TableServiceClient(endpoint=storage_url, credential=credential)
-table_client = table_service_client.get_table_client(table_name=TABLE_NAME)
+table_client = table_service.get_table_client(TABLE_NAME)
 
 @app.get("/ping")
 def ping():
