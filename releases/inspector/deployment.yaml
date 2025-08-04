@@ -9,7 +9,7 @@ metadata:
   name: inspector-sa
   namespace: inspector
   annotations:
-    azure.workload.identity/client-id: "b4cb02d6-e438-4f74-aa83-9897aef121ae"
+    azure.workload.identity/client-id: UMI_CLIENT_ID
 ---
 apiVersion: v1
 kind: Pod
@@ -25,7 +25,7 @@ spec:
     - name: acr-secret
   containers:
     - name: inspector
-      image: zrgsharedacr001dev.azurecr.io/inspector:220
+      image: IMAGE_NAME
       ports:
         - containerPort: 8000
       env:

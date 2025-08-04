@@ -38,11 +38,6 @@ stages:
             artifact: 'inspector-artifacts'
             path: '$(Build.ArtifactStagingDirectory)/inspector-artifacts'
 
-        - script: |
-            echo "Artifact contents:"
-            cat $(Build.ArtifactStagingDirectory)/inspector-artifacts/image
-          displayName: Show image from artifact
-
         - task: PowerShell@2
           displayName: Set publishing variables
           inputs:
@@ -76,6 +71,15 @@ stages:
             targetType: "inline"
             workingDirectory: releases/inspector
             script: |
+              $umiId = az identity show --name "umi-inspector" --resource-group "z-rg-apps-dev"--query clientId -o tsv
+
+              $imagePath = "$(Build.ArtifactStagingDirectory)/inspector-artifacts/image"
+              $image = Get-Content -Path $imagePath -Raw
+              $yamlPath = "./deployment.yaml"
+              (Get-Content -Path $yamlPath) -replace "UMI_CLIENT_ID", "$umiId" -replace "IMAGE_NAME", "$image" | Set-Content -Path $yamlPath
+
+              type $yamlPath
+
               $resourceGroup = "${{ stage.AKSRG}}"
               $clusterName = "${{ stage.AKS}}"
               
@@ -85,105 +89,105 @@ stages:
               Write-Host "Applying Kubernetes manifest: app/deployment.yaml"
               kubectl apply -f deployment.yaml
 
-        - task: PowerShell@2
-          displayName: "Wait for Service External IP"
-          inputs:
-            targetType: inline
-            workingDirectory: releases/inspector
-            script: |
-              $serviceName = "echo-service"
-              $namespace = "default"
-              $timeoutMinutes = 5
-              $intervalSeconds = 10
-              $elapsed = 0
-              $externalIp = ""
+        # - task: PowerShell@2
+        #   displayName: "Wait for Service External IP"
+        #   inputs:
+        #     targetType: inline
+        #     workingDirectory: releases/inspector
+        #     script: |
+        #       $serviceName = "echo-service"
+        #       $namespace = "default"
+        #       $timeoutMinutes = 5
+        #       $intervalSeconds = 10
+        #       $elapsed = 0
+        #       $externalIp = ""
 
-              Write-Host "Waiting for external IP of service '$serviceName' in namespace '$namespace'..."
+        #       Write-Host "Waiting for external IP of service '$serviceName' in namespace '$namespace'..."
 
-              while ($elapsed -lt ($timeoutMinutes * 60)) {
-                  $externalIp = kubectl get svc $serviceName -n $namespace -o jsonpath="{.status.loadBalancer.ingress[0].ip}"
-                  if (![string]::IsNullOrEmpty($externalIp)) {
-                      Write-Host "External IP acquired: $externalIp"
-                      break
-                  }
-                  Start-Sleep -Seconds $intervalSeconds
-                  $elapsed += $intervalSeconds
-                  Write-Host "Still waiting... elapsed: $elapsed seconds"
-              }
+        #       while ($elapsed -lt ($timeoutMinutes * 60)) {
+        #           $externalIp = kubectl get svc $serviceName -n $namespace -o jsonpath="{.status.loadBalancer.ingress[0].ip}"
+        #           if (![string]::IsNullOrEmpty($externalIp)) {
+        #               Write-Host "External IP acquired: $externalIp"
+        #               break
+        #           }
+        #           Start-Sleep -Seconds $intervalSeconds
+        #           $elapsed += $intervalSeconds
+        #           Write-Host "Still waiting... elapsed: $elapsed seconds"
+        #       }
 
-              if ([string]::IsNullOrEmpty($externalIp)) {
-                  Write-Error "Timeout waiting for external IP."
-                  exit 1
-              }
+        #       if ([string]::IsNullOrEmpty($externalIp)) {
+        #           Write-Error "Timeout waiting for external IP."
+        #           exit 1
+        #       }
 
-              # Set pipeline variable
-              Write-Host "##vso[task.setvariable variable=ECHO_SERVICE_IP;isOutput=true]$externalIp"
+        #       # Set pipeline variable
+        #       Write-Host "##vso[task.setvariable variable=ECHO_SERVICE_IP;isOutput=true]$externalIp"
 
-              (Get-Content -Path "./APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml") -replace "SERVICE_IP", "$externalIp" | Set-Content -Path "APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml"
-              type APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml
+        #       (Get-Content -Path "./APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml") -replace "SERVICE_IP", "$externalIp" | Set-Content -Path "APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml"
+        #       type APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml
               
-        - task: PowerShell@2
-          displayName: Fetch publisher
-          inputs:
-            targetType: "inline"
-            workingDirectory: releases/inspector
-            script: |
-              # Debug: Print variables
-              Write-Host "APIOps Release Version: $(apiops_release_version)"
-              Write-Host "Operating System: $(Agent.OS)"
+        # - task: PowerShell@2
+        #   displayName: Fetch publisher
+        #   inputs:
+        #     targetType: "inline"
+        #     workingDirectory: releases/inspector
+        #     script: |
+        #       # Debug: Print variables
+        #       Write-Host "APIOps Release Version: $(apiops_release_version)"
+        #       Write-Host "Operating System: $(Agent.OS)"
               
-              Set-StrictMode -Version Latest
-              $ErrorActionPreference = "Stop"
-              $VerbosePreference = "Continue"
-              $InformationPreference = "Continue"
+        #       Set-StrictMode -Version Latest
+        #       $ErrorActionPreference = "Stop"
+        #       $VerbosePreference = "Continue"
+        #       $InformationPreference = "Continue"
 
-              Write-Information "Downloading publisher..."
-              $publisherFileName = "$(Agent.OS)" -like "*win*" ? "publisher.win-x64.exe" : "publisher.linux-x64"
-              $uri = "https://github.com/Azure/apiops/releases/download/$(apiops_release_version)/$publisherFileName"
-              Write-Host "Constructed Download URI: $uri"
-              $destinationFilePath = Join-Path "$(Agent.TempDirectory)" "publisher.exe"
-              Invoke-WebRequest -Uri "$uri" -OutFile "$destinationFilePath"
+        #       Write-Information "Downloading publisher..."
+        #       $publisherFileName = "$(Agent.OS)" -like "*win*" ? "publisher.win-x64.exe" : "publisher.linux-x64"
+        #       $uri = "https://github.com/Azure/apiops/releases/download/$(apiops_release_version)/$publisherFileName"
+        #       Write-Host "Constructed Download URI: $uri"
+        #       $destinationFilePath = Join-Path "$(Agent.TempDirectory)" "publisher.exe"
+        #       Invoke-WebRequest -Uri "$uri" -OutFile "$destinationFilePath"
 
-              if ("$(Agent.OS)" -like "*linux*")
-              {
-                Write-Information "Setting file permissions..."
-                & chmod +x "$destinationFilePath"
-                if ($LASTEXITCODE -ne 0) { throw "Setting file permissions failed."}
-              }
-              Write-Host "PublisherFileName: $publisherFileName"
-              Write-Host "DestinationFile: $destinationFilePath"
-              Write-Host "##vso[task.setvariable variable=PUBLISHER_FILE_PATH]$destinationFilePath"
-              Write-Information "Execution complete."
-            failOnStderr: true
-            pwsh: true
+        #       if ("$(Agent.OS)" -like "*linux*")
+        #       {
+        #         Write-Information "Setting file permissions..."
+        #         & chmod +x "$destinationFilePath"
+        #         if ($LASTEXITCODE -ne 0) { throw "Setting file permissions failed."}
+        #       }
+        #       Write-Host "PublisherFileName: $publisherFileName"
+        #       Write-Host "DestinationFile: $destinationFilePath"
+        #       Write-Host "##vso[task.setvariable variable=PUBLISHER_FILE_PATH]$destinationFilePath"
+        #       Write-Information "Execution complete."
+        #     failOnStderr: true
+        #     pwsh: true
 
-        - task: PowerShell@2
-          displayName: Run publisher for ${{ stage.environmentCode}} environment
-          inputs:
-            targetType: "inline"
-            workingDirectory: releases/inspector
-            script: |
-              dir
-              ls
-              type APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml
-              Set-StrictMode -Version Latest
-              $ErrorActionPreference = "Stop"
-              $VerbosePreference = "Continue"
-              $InformationPreference = "Continue"
+        # - task: PowerShell@2
+        #   displayName: Run publisher for ${{ stage.environmentCode}} environment
+        #   inputs:
+        #     targetType: "inline"
+        #     workingDirectory: releases/inspector
+        #     script: |
+        #       dir
+        #       ls
+        #       type APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml
+        #       Set-StrictMode -Version Latest
+        #       $ErrorActionPreference = "Stop"
+        #       $VerbosePreference = "Continue"
+        #       $InformationPreference = "Continue"
 
-              & "$(PUBLISHER_FILE_PATH)"                
-              if ($LASTEXITCODE -ne 0) { throw "Running publisher failed."}
+        #       & "$(PUBLISHER_FILE_PATH)"                
+        #       if ($LASTEXITCODE -ne 0) { throw "Running publisher failed."}
 
-              Write-Information "Execution complete."
-            failOnStderr: true
-            pwsh: true
-          env:
-            AZURE_BEARER_TOKEN: $(AZURE_BEARER_TOKEN)
-            AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-            AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-            AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-            AZURE_SUBSCRIPTION_ID: ${{ stage.subscriptionId }}
-            AZURE_RESOURCE_GROUP_NAME: ${{ variables.RESOURCE_GROUP_NAME }}
-            API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH: ${{ variables.API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH }}
-            API_MANAGEMENT_SERVICE_NAME: ${{ variables.API_MANAGEMENT_SERVICE_NAME }}
-            CONFIGURATION_YAML_PATH: ${{ variables.CONFIGURATION_YAML_PATH }}
+        #       Write-Information "Execution complete."
+        #     failOnStderr: true
+        #     pwsh: true
+        #   env:
+        #     AZURE_BEARER_TOKEN: $(AZURE_BEARER_TOKEN)
+        #     AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+        #     AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+        #     AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+        #     AZURE_SUBSCRIPTION_ID: ${{ stage.subscriptionId }}
+        #     AZURE_RESOURCE_GROUP_NAME: ${{ variables.RESOURCE_GROUP_NAME }}
+        #     API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH: ${{ variables.API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH }}
+        #     API_MANAGEMENT_SERVICE_NAME: ${{ variables.API_MANAGEMENT_SERVICE_NAME }}
+        #     CONFIGURATION_YAML_PATH: ${{ variables.CONFIGURATION_YAML_PATH }}
