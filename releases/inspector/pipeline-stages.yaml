@@ -23,7 +23,7 @@ stages:
                   ENVIRONMENT: DEV
                   subscriptionId: "315e574e-7153-4853-8cfe-fa416bb08a23"
             - ${{ if eq(parameters.acc, true) }}:
-                - name: "Deploy_to_Apim_v2_Dev"
+                - name: "Deploy_to_Apim_v2_Acc"
                   environmentCode: acc
                   ENVIRONMENT: ACC
                   subscriptionId: "315e574e-7153-4853-8cfe-fa416bb08a23"
