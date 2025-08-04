@@ -52,20 +52,20 @@ spec:
             - configMapRef:
                 name: receiver-config
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: receiver
-  namespace: receiver
-  annotations:
-    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
-  labels:
-    app: receiver
-spec:
-  type: LoadBalancer
-  ports:
-    - port: 80
-      targetPort: 8000
-  selector:
-    app: receiver
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: receiver
+#   namespace: receiver
+#   annotations:
+#     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+#   labels:
+#     app: receiver
+# spec:
+#   type: LoadBalancer
+#   ports:
+#     - port: 80
+#       targetPort: 8000
+#   selector:
+#     app: receiver
