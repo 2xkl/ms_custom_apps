@@ -13,7 +13,7 @@ paths:
       responses:
         '200':
           description: ''
-  /inspect:
+  /chat:
     post:
       summary: POST
       operationId: POST
