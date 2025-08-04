@@ -47,10 +47,11 @@ stages:
               targetType: inline
               script: |
                 docker push $ACR_NAME.azurecr.io/inspector:$(Build.BuildId)
-                mkdir inspector-artifacts
-                echo $ACR_NAME.azurecr.io/chat:$(Build.BuildId) > inspector-artifacts/image
-                ls
-                pwd
+                mkdir -p $(Build.ArtifactStagingDirectory)/inspector-artifacts
+                echo "$ACR_NAME.azurecr.io/inspector:$(Build.BuildId)" > $(Build.ArtifactStagingDirectory)/inspector-artifacts/image
+
+                ls -l $(Build.ArtifactStagingDirectory)/inspector-artifacts
+                echo "Wrote image reference to artifact staging directory"
             env:
               ACR_NAME: $(ACR_NAME)
 
