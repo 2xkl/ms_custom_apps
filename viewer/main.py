@@ -12,6 +12,8 @@ logging.basicConfig(level=logging.INFO)
 TABLE_STORAGE_ACCOUNT_URL = os.getenv("TABLE_STORAGE_ACCOUNT_URL")  # e.g., https://youraccount.table.core.windows.net
 TABLE_NAME = os.getenv("TABLE_NAME", "emails")
 
+print("TABLE_STORAGE_ACCOUNT_URL =", TABLE_STORAGE_ACCOUNT_URL)
+
 if not TABLE_STORAGE_ACCOUNT_URL:
     raise RuntimeError("Missing TABLE_STORAGE_ACCOUNT_URL environment variable.")
 
