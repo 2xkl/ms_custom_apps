@@ -125,7 +125,7 @@ stages:
               type APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml
               
         - task: PowerShell@2
-          displayName: Fetch viewer
+          displayName: Fetch publisher
           inputs:
             targetType: "inline"
             workingDirectory: releases/viewer
@@ -139,11 +139,11 @@ stages:
               $VerbosePreference = "Continue"
               $InformationPreference = "Continue"
 
-              Write-Information "Downloading viewer..."
-              $viewerFileName = "$(Agent.OS)" -like "*win*" ? "viewer.win-x64.exe" : "viewer.linux-x64"
-              $uri = "https://github.com/Azure/apiops/releases/download/$(apiops_release_version)/$viewerFileName"
+              Write-Information "Downloading publisher..."
+              $publisherFileName = "$(Agent.OS)" -like "*win*" ? "publisher.win-x64.exe" : "publisher.linux-x64"
+              $uri = "https://github.com/Azure/apiops/releases/download/$(apiops_release_version)/$publisherFileName"
               Write-Host "Constructed Download URI: $uri"
-              $destinationFilePath = Join-Path "$(Agent.TempDirectory)" "viewer.exe"
+              $destinationFilePath = Join-Path "$(Agent.TempDirectory)" "publisher.exe"
               Invoke-WebRequest -Uri "$uri" -OutFile "$destinationFilePath"
 
               if ("$(Agent.OS)" -like "*linux*")
@@ -152,9 +152,9 @@ stages:
                 & chmod +x "$destinationFilePath"
                 if ($LASTEXITCODE -ne 0) { throw "Setting file permissions failed."}
               }
-              Write-Host "viewerFileName: $viewerFileName"
+              Write-Host "PublisherFileName: $publisherFileName"
               Write-Host "DestinationFile: $destinationFilePath"
-              Write-Host "##vso[task.setvariable variable=viewer_FILE_PATH]$destinationFilePath"
+              Write-Host "##vso[task.setvariable variable=PUBLISHER_FILE_PATH]$destinationFilePath"
               Write-Information "Execution complete."
             failOnStderr: true
             pwsh: true
