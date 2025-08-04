@@ -30,7 +30,7 @@ spec:
         - containerPort: 8000
       env:
         - name: AZURE_KEYVAULT_NAME
-          value: "z-kv-apps-dev"
+          value: "z-kv-apps-o-dev"
         - name: AZURE_OPENAI_DEPLOYMENT
           value: "gpt-35-turbo"
         - name: AZURE_OPENAI_API_VERSION
