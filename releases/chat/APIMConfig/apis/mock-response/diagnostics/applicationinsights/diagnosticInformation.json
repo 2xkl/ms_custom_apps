@@ -1,0 +1,13 @@
+{
+  "properties": {
+    "alwaysLog": "allErrors",
+    "httpCorrelationProtocol": "Legacy",
+    "logClientIp": true,
+    "loggerId": "",
+    "sampling": {
+      "percentage": 100,
+      "samplingType": "Fixed"
+    },
+    "verbosity": "information"
+  }
+}

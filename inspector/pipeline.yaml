@@ -47,6 +47,7 @@ stages:
               targetType: inline
               script: |
                 docker push $ACR_NAME.azurecr.io/inspector:$(Build.BuildId)
-                echo $ACR_NAME.azurecr.io/chat:$(Build.BuildId)
+                mkdir artifact
+                echo $ACR_NAME.azurecr.io/chat:$(Build.BuildId) > artifact/image
             env:
               ACR_NAME: $(ACR_NAME)

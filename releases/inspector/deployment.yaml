@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: inspector
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: inspector-sa
+  namespace: inspector
+  annotations:
+    azure.workload.identity/client-id: "b4cb02d6-e438-4f74-aa83-9897aef121ae"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: inspector
+  namespace: inspector
+  labels:
+    app: inspector
+    azure.workload.identity/use: "true"
+spec:
+  serviceAccountName: inspector-sa
+  imagePullSecrets:
+    - name: acr-secret
+  containers:
+    - name: inspector
+      image: zrgsharedacr001dev.azurecr.io/inspector:220
+      ports:
+        - containerPort: 8000
+      env:
+        - name: AZURE_KEYVAULT_NAME
+          value: "z-kv-apps-dev"
+        - name: AZURE_OPENAI_DEPLOYMENT
+          value: "gpt-35-turbo"
+        - name: AZURE_OPENAI_API_VERSION
+          value: "2024-05-01-preview"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inspector
+  namespace: inspector
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+  labels:
+    app: inspector
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8000
+  selector:
+    app: inspector
