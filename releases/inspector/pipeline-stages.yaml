@@ -8,10 +8,10 @@ parameters:
     displayName: DEV
     type: boolean
     default: true
-  - name: acc
-    displayName: ACC
-    type: boolean
-    default: true
+  # - name: acc
+  #   displayName: ACC
+  #   type: boolean
+  #   default: true
 
 stages:
       - template: pipeline-template.yaml
@@ -22,8 +22,8 @@ stages:
                   environmentCode: dev
                   ENVIRONMENT: DEV
                   subscriptionId: "315e574e-7153-4853-8cfe-fa416bb08a23"
-            - ${{ if eq(parameters.acc, true) }}:
-                - name: "Deploy_to_Apim_v2_Acc"
-                  environmentCode: acc
-                  ENVIRONMENT: ACC
-                  subscriptionId: "315e574e-7153-4853-8cfe-fa416bb08a23"
+            # - ${{ if eq(parameters.acc, true) }}:
+            #     - name: "Deploy_to_Apim_v2_Acc"
+            #       environmentCode: acc
+            #       ENVIRONMENT: ACC
+            #       subscriptionId: "315e574e-7153-4853-8cfe-fa416bb08a23"
