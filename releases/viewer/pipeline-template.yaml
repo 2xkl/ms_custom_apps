@@ -165,8 +165,6 @@ stages:
             targetType: "inline"
             workingDirectory: releases/viewer
             script: |
-              dir
-              ls
               type APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml
               Set-StrictMode -Version Latest
               $ErrorActionPreference = "Stop"
