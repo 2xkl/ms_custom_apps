@@ -16,14 +16,12 @@ logging.debug(f"Storage URL: {storage_url}")
 
 credential = DefaultAzureCredential()
 
-
 try:
     token = credential.get_token("https://storage.azure.com/.default")
     logging.debug(f"Access token acquired successfully: {token.token[:10]}...")
 except Exception as e:
     logging.error(f"Failed to acquire token: {e}")
     raise RuntimeError(f"Credential error: {e}")
-
 
 table_service = TableServiceClient(endpoint=storage_url, credential=credential)
 table_client = table_service.get_table_client(TABLE_NAME)
@@ -36,7 +34,8 @@ def ping():
 def get_all_emails():
     try:
         logging.info("Fetching emails from Table Storage...")
-        entities = table_client.query_entities("PartitionKey eq 'emails'")
+        # Poprawiony filtr PartitionKey na 'email'
+        entities = table_client.query_entities("PartitionKey eq 'email'")
         result = []
 
         for entity in entities:
