@@ -14,8 +14,8 @@ TABLE_NAME = "emails"
 storage_url = f"https://{STORAGE_ACCOUNT_NAME}.table.core.windows.net"
 logging.debug(f"Storage URL: {storage_url}")
 
-# Inicjalizacja DefaultAzureCredential i sprawdzenie tokenu
 credential = DefaultAzureCredential()
+
 
 try:
     token = credential.get_token("https://storage.azure.com/.default")
@@ -24,8 +24,8 @@ except Exception as e:
     logging.error(f"Failed to acquire token: {e}")
     raise RuntimeError(f"Credential error: {e}")
 
-# Inicjalizacja TableServiceClient z poprawnym parametrem account_url
-table_service = TableServiceClient(account_url=storage_url, credential=credential)
+
+table_service = TableServiceClient(endpoint=storage_url, credential=credential)
 table_client = table_service.get_table_client(TABLE_NAME)
 
 @app.get("/ping")
