@@ -9,7 +9,7 @@ app = FastAPI()
 logging.basicConfig(level=logging.DEBUG)
 
 STORAGE_ACCOUNT_NAME = "storappsdevasd213"
-TABLE_NAME = "emails"
+TABLE_NAME = "email"
 
 storage_url = f"https://{STORAGE_ACCOUNT_NAME}.table.core.windows.net"
 logging.debug(f"Storage URL: {storage_url}")
