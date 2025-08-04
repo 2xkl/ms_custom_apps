@@ -25,13 +25,13 @@ stages:
             inputs:
               buildType: 'specific'
               project: '$(System.TeamProject)'
-              pipeline: 'Build app inspector'  # <-- nazwa pipeline'u budującego
+              pipeline: 'Build app inspector'
               runVersion: 'latest'
               artifact: 'inspector-artifacts'
               path: '$(Build.ArtifactStagingDirectory)/inspector-artifacts'
 
           - script: |
-              echo "📦 Artifact contents:"
+              echo "Artifact contents:"
               cat $(Build.ArtifactStagingDirectory)/inspector-artifacts/image
             displayName: Show image from artifact
 

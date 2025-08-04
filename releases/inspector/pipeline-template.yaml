@@ -29,11 +29,27 @@ stages:
         name: Default
       steps:
 
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            buildType: 'specific'
+            project: '$(System.TeamProject)'
+            pipeline: 'Build app inspector'
+            runVersion: 'latest'
+            artifact: 'inspector-artifacts'
+            path: '$(Build.ArtifactStagingDirectory)/inspector-artifacts'
+
+        - script: |
+            echo "Artifact contents:"
+            cat $(Build.ArtifactStagingDirectory)/inspector-artifacts/image
+          displayName: Show image from artifact
+
         - task: PowerShell@2
           displayName: Set publishing variables
           inputs:
             targetType: inline
             script: |
+              dir
+              ls
               Set-StrictMode -Version Latest
               $ErrorActionPreference = "Stop"
               $VerbosePreference = "Continue"
