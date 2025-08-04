@@ -17,8 +17,8 @@ metadata:
   name: viewer-config
   namespace: viewer
 data:
-  STORAGE_ACCOUNT_NAME: "storappsdevasd213"
-  TABLE_NAME: "emails"
+  TABLE_STORAGE_ACCOUNT_URL: "https://storappsdevasd213.table.core.windows.net"
+  TABLE_NAME: "email"
 ---
 apiVersion: apps/v1
 kind: Deployment
