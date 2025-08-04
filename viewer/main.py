@@ -1,30 +1,11 @@
-from fastapi import FastAPI, HTTPException
+# from fastapi import FastAPI, HTTPException
 from azure.data.tables import TableServiceClient
 from azure.identity import DefaultAzureCredential
 import logging
 
+from fastapi import FastAPI
+
 app = FastAPI()
-
-# Włącz maksymalne logowanie
-logging.basicConfig(level=logging.DEBUG)
-
-STORAGE_ACCOUNT_NAME = "storappsdevasd213"
-TABLE_NAME = "email"
-
-storage_url = f"https://{STORAGE_ACCOUNT_NAME}.table.core.windows.net"
-logging.debug(f"Storage URL: {storage_url}")
-
-credential = DefaultAzureCredential()
-
-try:
-    token = credential.get_token("https://storage.azure.com/.default")
-    logging.debug(f"Access token acquired successfully: {token.token[:10]}...")
-except Exception as e:
-    logging.error(f"Failed to acquire token: {e}")
-    raise RuntimeError(f"Credential error: {e}")
-
-table_service = TableServiceClient(endpoint=storage_url, credential=credential)
-table_client = table_service.get_table_client(TABLE_NAME)
 
 @app.get("/ping")
 def ping():
