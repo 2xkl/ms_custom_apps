@@ -18,11 +18,9 @@ spec:
         azure.workload.identity/use: "true"
     spec:
       serviceAccountName: chat-sa
-      imagePullSecrets:
-        - name: {{ .Values.image.pullSecret }}
       containers:
         - name: chat
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.name }}"
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: {{ .Values.service.targetPort }}

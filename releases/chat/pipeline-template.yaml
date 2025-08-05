@@ -86,7 +86,7 @@ stages:
                 --set appVersion="$version" `
                 --set version="$version" `
                 --set umiClientId="$umiId" `
-                --set image.repository="$image" `
+                --set image.name="$image" `
                 --set config.clientUrl="https://frontend.local"
 
         - task: PowerShell@2

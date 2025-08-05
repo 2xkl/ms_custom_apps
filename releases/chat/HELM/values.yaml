@@ -3,9 +3,7 @@ namespace: chat
 appVersion: "1.0.000"
 
 image:
-  repository: IMAGE_NAME
-  tag: latest
-  pullSecret: acr-secret
+  name: IMAGE
 
 replicaCount: 2
 
