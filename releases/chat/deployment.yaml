@@ -20,7 +20,7 @@ data:
   AZURE_KEYVAULT_NAME: "z-kv-apps-vd-dev"
   AZURE_OPENAI_DEPLOYMENT: "gpt-35-turbo"
   AZURE_OPENAI_API_VERSION: "2024-05-01-preview"
-  CLIENT_URL: "https://witty-sand-0853c4b03-preview.westeurope.2.azurestaticapps.net"
+  CLIENT_URL: "witty-sand-0853c4b03-preview.westeurope.2.azurestaticapps.net"
 ---
 apiVersion: apps/v1
 kind: Deployment
