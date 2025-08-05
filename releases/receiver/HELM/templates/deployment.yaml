@@ -36,15 +36,3 @@ spec:
                 - ALL
             seccompProfile:
               type: RuntimeDefault
-          livenessProbe:
-            httpGet:
-              path: /ping
-              port: {{ .Values.service.targetPort }}
-            initialDelaySeconds: 10
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /ping
-              port: {{ .Values.service.targetPort }}
-            initialDelaySeconds: 5
-            periodSeconds: 5
