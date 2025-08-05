@@ -1,9 +1,9 @@
-namespace: chat
+namespace: viewer
 
 appVersion: "1.0.002"
 replicaCount: 2
 
-image: myregistry.azurecr.io/chat:1.0.002
+image: myregistry.azurecr.io/viewer:1.0.002
 
 service:
   type: LoadBalancer
