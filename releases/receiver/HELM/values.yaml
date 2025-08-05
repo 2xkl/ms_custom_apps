@@ -1,9 +1,9 @@
-namespace: chat
+namespace: receiver
 
 appVersion: "1.0.002"
 replicaCount: 2
 
-image: myregistry.azurecr.io/chat:1.0.002
+image: myregistry.azurecr.io/receiver:1.0.002
 
 service:
   type: LoadBalancer
@@ -13,9 +13,11 @@ service:
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 
 config:
-  azureKeyVaultName: z-kv-apps-vd-dev
-  azureOpenAIDeployment: gpt-35-turbo
-  azureOpenAIAPIVersion: 2024-05-01-preview
-  clientUrl: ""
+  servicebusNamespace: "sb-apps-cust-dev.servicebus.windows.net"
+  servicebusTopic: "events"
+  servicebusSubscription: "mails"
+  inspectorUrl: "http://192.168.61.34/inspect"
+  storageAccount: "storrandocuas2"
+  table: "email"
 
 umiClientId: UMI_CLIENT_ID

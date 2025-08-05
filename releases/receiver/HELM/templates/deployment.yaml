@@ -1,32 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: chat
+  name: receiver
   namespace: {{ .Values.namespace }}
   labels:
-    app.kubernetes.io/name: "chat"
+    app.kubernetes.io/name: "receiver"
     app.kubernetes.io/version: "{{ .Values.appVersion }}"
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: chat
+      app: receiver
   template:
     metadata:
       labels:
-        app: chat
+        app: receiver
         azure.workload.identity/use: "true"
     spec:
-      serviceAccountName: chat-sa
+      serviceAccountName: receiver-sa
       containers:
-        - name: chat
+        - name: receiver
           image: "{{ .Values.image }}"
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: {{ .Values.service.targetPort }}
           envFrom:
             - configMapRef:
-                name: chat-config
+                name: receiver-config
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
