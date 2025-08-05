@@ -8,8 +8,7 @@ import logging
 app = FastAPI()
 logging.basicConfig(level=logging.INFO)
 
-# Environment variable must contain the full table storage account name (e.g., "myaccount.table.core.windows.net")
-TABLE_STORAGE_ACCOUNT_URL = os.getenv("TABLE_STORAGE_ACCOUNT_URL")  # e.g., https://youraccount.table.core.windows.net
+TABLE_STORAGE_ACCOUNT_URL = os.getenv("TABLE_STORAGE_ACCOUNT_URL")
 TABLE_NAME = os.getenv("TABLE_NAME", "email")
 
 print("TABLE_STORAGE_ACCOUNT_URL =", TABLE_STORAGE_ACCOUNT_URL)
@@ -17,7 +16,6 @@ print("TABLE_STORAGE_ACCOUNT_URL =", TABLE_STORAGE_ACCOUNT_URL)
 if not TABLE_STORAGE_ACCOUNT_URL:
     raise RuntimeError("Missing TABLE_STORAGE_ACCOUNT_URL environment variable.")
 
-# Use DefaultAzureCredential (supports workload identity in AKS)
 credential = DefaultAzureCredential()
 table_service_client = TableServiceClient(endpoint=TABLE_STORAGE_ACCOUNT_URL, credential=credential)
 table_client = table_service_client.get_table_client(table_name=TABLE_NAME)

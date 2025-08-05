@@ -8,10 +8,8 @@ from azure.data.tables import TableServiceClient
 from datetime import datetime
 import uuid
 
-# Setup logging
 logging.basicConfig(level=logging.INFO)
 
-# Config from environment
 SERVICE_BUS_NAMESPACE = os.getenv("SERVICEBUS_NAMESPACE")
 TOPIC_NAME = os.getenv("SERVICEBUS_TOPIC_NAME", "events")
 SUBSCRIPTION_NAME = os.getenv("SERVICEBUS_SUBSCRIPTION_NAME", "mails")
@@ -19,15 +17,12 @@ INSPECTOR_URL = os.getenv("INSPECTOR_URL", "http://10.1.2.4")
 STORAGE_ACCOUNT_NAME = os.getenv("STORAGE_ACCOUNT_NAME")
 TABLE_NAME = os.getenv("TABLE_NAME", "email")
 
-# Validations
 for var_name in ["SERVICEBUS_NAMESPACE", "STORAGE_ACCOUNT_NAME"]:
     if not os.getenv(var_name):
         raise RuntimeError(f"Missing environment variable: {var_name}")
 
-# Auth
 credential = DefaultAzureCredential()
 
-# Clients
 bus_client = ServiceBusClient(
     fully_qualified_namespace=SERVICE_BUS_NAMESPACE,
     credential=credential
