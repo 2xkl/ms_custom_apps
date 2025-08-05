@@ -1,16 +1,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: chat
+  name: viewer
   namespace: {{ .Values.namespace }}
   annotations:
 {{ toYaml .Values.service.annotations | indent 4 }}
   labels:
-    app: chat
+    app: viewer
 spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.targetPort }}
   selector:
-    app: chat
+    app: viewer

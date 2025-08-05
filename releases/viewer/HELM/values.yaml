@@ -13,9 +13,7 @@ service:
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 
 config:
-  azureKeyVaultName: z-kv-apps-vd-dev
-  azureOpenAIDeployment: gpt-35-turbo
-  azureOpenAIAPIVersion: 2024-05-01-preview
-  clientUrl: ""
+  tableStorageAccountUrl: "https://storrandocuas2.table.core.windows.net"
+  tableName: email
 
 umiClientId: UMI_CLIENT_ID
