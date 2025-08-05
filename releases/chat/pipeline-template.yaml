@@ -76,7 +76,6 @@ stages:
               $version = "1.0.000"
 
               helm upgrade --install chat ./HELM `
-                -n chat `
                 -f ./HELM/values.yaml `
                 --set appVersion="$version" `
                 --set image="$image" `
