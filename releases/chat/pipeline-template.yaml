@@ -15,8 +15,6 @@ stages:
         value: 'APIMConfig'
       - name: RESOURCE_GROUP_NAME
         value: 'z-rg-ingress-dev'
-      - name: API_MANAGEMENT_SERVICE_NAME
-        value: '$(API_MANAGEMENT_SERVICE_NAME)'
       - name: APIM_LOGGER_NAME
         value: "appinsights-logger"
       - name: CONFIGURATION_YAML_PATH
@@ -182,5 +180,5 @@ stages:
             AZURE_SUBSCRIPTION_ID: ${{ stage.subscriptionId }}
             AZURE_RESOURCE_GROUP_NAME: ${{ variables.RESOURCE_GROUP_NAME }}
             API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH: ${{ variables.API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH }}
-            API_MANAGEMENT_SERVICE_NAME: ${{ variables.API_MANAGEMENT_SERVICE_NAME }}
+            API_MANAGEMENT_SERVICE_NAME: $(API_MANAGEMENT_SERVICE_NAME)
             CONFIGURATION_YAML_PATH: ${{ variables.CONFIGURATION_YAML_PATH }}
