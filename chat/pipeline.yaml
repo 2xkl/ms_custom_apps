@@ -40,7 +40,16 @@ stages:
               workingDirectory: chat
               script: |
                 docker build -t $ACR_NAME.azurecr.io/chat:$(Build.BuildId) .
-          
+
+          - task: Bash@3
+            displayName: Scan Docker Image with Trivy
+            inputs:
+              targetType: inline
+              script: |
+                echo "Scanning image with Trivy..."
+                trivy image --exit-code 1 --severity HIGH,CRITICAL \
+                  "$ACR_NAME.azurecr.io/chat:$(Build.BuildId)"
+
           - task: Bash@3
             displayName: Push Docker Image
             inputs:
