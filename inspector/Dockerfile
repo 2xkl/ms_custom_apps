@@ -1,19 +1,18 @@
-FROM python:3.11-slim
+FROM python:3.11.9-slim
 
-# Instalacja zależności systemowych
-RUN apt-get update && apt-get install -y build-essential
-
-# Ustaw katalog roboczy
 WORKDIR /app
 
-# Kopiowanie plików
+RUN adduser --disabled-password --no-create-home --gecos '' appuser \
+    && chown -R appuser /app
+
 COPY requirements.txt .
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY --chown=appuser:appuser app/ app/
 
-# Zmienna środowiskowa dla portu (opcjonalnie)
-ENV PORT=8000
+USER appuser
 
-# Start aplikacji
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+EXPOSE 8000
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--timeout-keep-alive", "5"]

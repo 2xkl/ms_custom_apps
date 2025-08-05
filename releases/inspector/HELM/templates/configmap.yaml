@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: chat-config
+  name: inspector-config
   namespace: {{ .Values.namespace }}
 data:
   AZURE_KEYVAULT_NAME: {{ .Values.config.azureKeyVaultName | quote }}

@@ -1,9 +1,9 @@
-namespace: chat
+namespace: inspector
 
-appVersion: "1.0.002"
+appVersion: "1.0.00"
 replicaCount: 2
 
-image: myregistry.azurecr.io/chat:1.0.002
+image: myregistry.azurecr.io/inspector:1.0.002
 
 service:
   type: LoadBalancer
@@ -16,6 +16,5 @@ config:
   azureKeyVaultName: z-kv-apps-vd-dev
   azureOpenAIDeployment: gpt-35-turbo
   azureOpenAIAPIVersion: 2024-05-01-preview
-  clientUrl: ""
 
 umiClientId: UMI_CLIENT_ID

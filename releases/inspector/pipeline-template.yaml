@@ -64,24 +64,23 @@ stages:
             targetType: "inline"
             workingDirectory: releases/inspector
             script: |
-              $umiId = az identity show --name "umi-inspector" --resource-group "z-rg-apps-dev"--query clientId -o tsv
+              $resourceGroup = "${{ stage.AKSRG }}"
+              $clusterName = "${{ stage.AKS }}"
+
+              az aks get-credentials --resource-group $resourceGroup --name $clusterName --overwrite-existing
+              $umiId = az identity show --name "umi-inspector" --resource-group "z-rg-apps-dev" --query clientId -o tsv
 
               $imagePath = "$(Build.ArtifactStagingDirectory)/inspector-artifacts/image"
               $image = Get-Content -Path $imagePath -Raw
-              $yamlPath = "./deployment.yaml"
-              (Get-Content -Path $yamlPath) -replace "UMI_CLIENT_ID", "$umiId" -replace "IMAGE_NAME", "$image" | Set-Content -Path $yamlPath
+              $image = $image.Trim()
+              $version = "1.0.000"
 
-              type $yamlPath
-
-              $resourceGroup = "${{ stage.AKSRG}}"
-              $clusterName = "${{ stage.AKS}}"
-              
-              Write-Host "Getting AKS credentials for cluster '$clusterName' in resource group '$resourceGroup'..."
-              az aks get-credentials --resource-group $resourceGroup --name $clusterName --overwrite-existing
-
-              Write-Host "Applying Kubernetes manifest: app/deployment.yaml"
-              kubectl apply -f deployment.yaml
-
+              helm upgrade --install inspector ./HELM `
+                -f ./HELM/values.yaml `
+                --set appVersion="$version" `
+                --set image="$image" `
+                --set umiClientId="$umiId"
+                
         - task: PowerShell@2
           displayName: "Wait for Service External IP"
           inputs:
