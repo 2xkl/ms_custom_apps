@@ -80,8 +80,8 @@ stages:
 
               $imagePath = "$(Build.ArtifactStagingDirectory)/chat-artifacts/image"
               $image = Get-Content -Path $imagePath -Raw
-
-              $version = "1.0.002"
+              $image = $image.Trim()
+              $version = "1.0.003"
 
               helm upgrade --install chat ./HELM `
                 -n chat `
