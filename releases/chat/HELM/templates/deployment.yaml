@@ -20,7 +20,7 @@ spec:
       serviceAccountName: chat-sa
       containers:
         - name: chat
-          image: "{{ .Values.image.name }}"
+          image: "{{ .Values.image }}"
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: {{ .Values.service.targetPort }}

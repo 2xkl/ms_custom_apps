@@ -81,12 +81,15 @@ stages:
               $imagePath = "$(Build.ArtifactStagingDirectory)/chat-artifacts/image"
               $image = Get-Content -Path $imagePath -Raw
 
+              $version = "1.0.002"
+
               helm upgrade --install chat ./HELM `
+                -n chat `
+                --create-namespace `
                 -f ./HELM/values.yaml `
-                --set appVersion="1.0.002" `
-                --set version="1.0.1" `
+                --set appVersion="$version" `
+                --set image="$image" `
                 --set umiClientId="$umiId" `
-                --set image.name="$image" `
                 --set config.clientUrl="https://frontend.local"
 
         - task: PowerShell@2
