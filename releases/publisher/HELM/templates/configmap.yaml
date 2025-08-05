@@ -1,10 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: chat-config
+  name: publisher-config
   namespace: {{ .Values.namespace }}
 data:
-  AZURE_KEYVAULT_NAME: {{ .Values.config.azureKeyVaultName | quote }}
-  AZURE_OPENAI_DEPLOYMENT: {{ .Values.config.azureOpenAIDeployment | quote }}
-  AZURE_OPENAI_API_VERSION: {{ .Values.config.azureOpenAIAPIVersion | quote }}
-  CLIENT_URL: {{ .Values.config.clientUrl | quote }}
+  SERVICEBUS_NAMESPACE: {{ .Values.config.servicebusNamespace | quote }}
+  SERVICEBUS_TOPIC_NAME: {{ .Values.config.servicebusTopicName | quote }}
