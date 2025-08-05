@@ -4,7 +4,8 @@ metadata:
   name: chat
   namespace: {{ .Values.namespace }}
   labels:
-    app.kubernetes.io/version: {{ .Values.appVersion }}
+    app.kubernetes.io/name: "chat"
+    app.kubernetes.io/version: "{{ .Values.appVersion }}"
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -29,13 +30,14 @@ spec:
             - configMapRef:
                 name: chat-config
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 3000
             runAsNonRoot: true
+            runAsUser: 1000
             allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
+            seccompProfile:
+              type: RuntimeDefault
           resources:
             requests:
               cpu: "100m"
