@@ -16,7 +16,7 @@ stages:
       - name: RESOURCE_GROUP_NAME
         value: 'z-rg-ingress-dev'
       - name: API_MANAGEMENT_SERVICE_NAME
-        value: 'apim-custpm-onfghs'
+        value: '$(API_MANAGEMENT_SERVICE_NAME)'
       - name: APIM_LOGGER_NAME
         value: "appinsights-logger"
       - name: CONFIGURATION_YAML_PATH
@@ -83,7 +83,7 @@ stages:
                 --set appVersion="$version" `
                 --set image="$image" `
                 --set umiClientId="$umiId" `
-                --set config.clientUrl="https://frontend.local"
+                --set config.clientUrl="https://witty-sand-0853c4b03-preview.westeurope.2.azurestaticapps.net/"
 
         - task: PowerShell@2
           displayName: "Wait for Service External IP"

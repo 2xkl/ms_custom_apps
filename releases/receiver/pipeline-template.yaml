@@ -16,7 +16,7 @@ stages:
       - name: RESOURCE_GROUP_NAME
         value: 'z-rg-ingress-dev'
       - name: API_MANAGEMENT_SERVICE_NAME
-        value: 'apim-custom-onibxl'
+        value: '$(API_MANAGEMENT_SERVICE_NAME)'
       - name: APIM_LOGGER_NAME
         value: "appinsights-logger"
       - name: CONFIGURATION_YAML_PATH
