@@ -85,7 +85,6 @@ stages:
 
               helm upgrade --install chat ./HELM `
                 -n chat `
-                --create-namespace `
                 -f ./HELM/values.yaml `
                 --set appVersion="$version" `
                 --set image="$image" `
