@@ -54,7 +54,7 @@ class ChatResponse(BaseModel):
 async def ping():
     return {"status": "ok"}
 
-@app.post("/chat", response_model=ChatResponse)
+@app.post("/message", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
     chat_history = [
         {"role": "system", "content": "You are a helpful assistant."},
