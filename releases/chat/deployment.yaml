@@ -17,10 +17,10 @@ metadata:
   name: chat-config
   namespace: chat
 data:
-  AZURE_KEYVAULT_NAME: "z-kv-apps-oo-dev"
+  AZURE_KEYVAULT_NAME: "z-kv-apps-vd-dev"
   AZURE_OPENAI_DEPLOYMENT: "gpt-35-turbo"
   AZURE_OPENAI_API_VERSION: "2024-05-01-preview"
-  CLIENT_URL: ""
+  CLIENT_URL: "asd"
 ---
 apiVersion: apps/v1
 kind: Deployment
