@@ -24,7 +24,7 @@ steps:
 
   - script: |
       npm install
-      REACT_APP_API_URL="http://9.163.147.163/chat/v1/chat" npm run build
+      REACT_APP_API_URL="http://9.163.147.163/chat/v1/message" npm run build
     displayName: 'Build React App'
     workingDirectory: ui-chat
 
