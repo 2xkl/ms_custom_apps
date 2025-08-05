@@ -15,8 +15,6 @@ stages:
         value: 'APIMConfig'
       - name: RESOURCE_GROUP_NAME
         value: 'z-rg-ingress-dev'
-      - name: API_MANAGEMENT_SERVICE_NAME
-        value: '$(API_MANAGEMENT_SERVICE_NAME)'
       - name: APIM_LOGGER_NAME
         value: "appinsights-logger"
       - name: CONFIGURATION_YAML_PATH
@@ -48,10 +46,7 @@ stages:
               $VerbosePreference = "Continue"
               $InformationPreference = "Continue"
 
-              az login --service-principal `
-                --username "$env:SP_USERNAME" `
-                --password "$env:SP_PASSWORD" `
-                --tenant "$env:TENANT_ID"
+              az login --service-principal --username "$env:SP_USERNAME" --password "$env:SP_PASSWORD" --tenant "$env:TENANT_ID"
 
               $azureAccessToken = az account get-access-token --query "accessToken" --output tsv
               Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_BEARER_TOKEN]$azureAccessToken"
@@ -187,5 +182,5 @@ stages:
             AZURE_SUBSCRIPTION_ID: ${{ stage.subscriptionId }}
             AZURE_RESOURCE_GROUP_NAME: ${{ variables.RESOURCE_GROUP_NAME }}
             API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH: ${{ variables.API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH }}
-            API_MANAGEMENT_SERVICE_NAME: ${{ variables.API_MANAGEMENT_SERVICE_NAME }}
+            API_MANAGEMENT_SERVICE_NAME: $(API_MANAGEMENT_SERVICE_NAME)
             CONFIGURATION_YAML_PATH: ${{ variables.CONFIGURATION_YAML_PATH }}

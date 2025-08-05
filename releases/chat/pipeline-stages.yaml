@@ -10,13 +10,13 @@ parameters:
     default: true
 
 stages:
-      - template: pipeline-template.yaml
-        parameters:
-          stages:
-            - ${{ if eq(parameters.dev, true) }}:
-                - name: "Deploy_to_Apim_v2_Dev"
-                  environmentCode: dev
-                  ENVIRONMENT: DEV
-                  subscriptionId: "315e574e-7153-4853-8cfe-fa416bb08a23"
-                  AKS: "akscluster"
-                  AKSRG: "z-rg-aks-dev"
+  - template: pipeline-template.yaml
+    parameters:
+      stages:
+        - ${{ if eq(parameters.dev, true) }}:
+            - name: "Deploy_to_Apim_v2_Dev"
+              environmentCode: dev
+              ENVIRONMENT: DEV
+              subscriptionId: "315e574e-7153-4853-8cfe-fa416bb08a23"
+              AKS: "akscluster"
+              AKSRG: "z-rg-aks-dev"

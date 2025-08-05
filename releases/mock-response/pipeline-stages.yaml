@@ -10,12 +10,11 @@ parameters:
     default: true
 
 stages:
-      - template: pipeline-template.yaml
-        parameters:
-          stages:
-            - ${{ if eq(parameters.dev, true) }}:
-                - name: "Deploy_to_Apim_v2_Dev"
-                  environmentCode: dev
-                  ENVIRONMENT: DEV
-                  servicePrincipal: "DEV Integration Platform"
-                  subscriptionId: "315e574e-7153-4853-8cfe-fa416bb08a23"
+  - template: pipeline-template.yaml
+    parameters:
+      stages:
+        - ${{ if eq(parameters.dev, true) }}:
+            - name: "Deploy_to_Apim_v2_Dev"
+              environmentCode: dev
+              ENVIRONMENT: DEV
+              subscriptionId: "315e574e-7153-4853-8cfe-fa416bb08a23"

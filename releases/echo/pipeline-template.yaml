@@ -15,8 +15,6 @@ stages:
         value: 'APIMConfig'
       - name: RESOURCE_GROUP_NAME
         value: 'z-rg-ingress-dev'
-      - name: API_MANAGEMENT_SERVICE_NAME
-        value: '$(API_MANAGEMENT_SERVICE_NAME)'
       - name: APIM_LOGGER_NAME
         value: "appinsights-logger"
       - name: CONFIGURATION_YAML_PATH
@@ -39,25 +37,13 @@ stages:
               $VerbosePreference = "Continue"
               $InformationPreference = "Continue"
 
-              az login --service-principal `
-                --username "$env:SP_USERNAME" `
-                --password "$env:SP_PASSWORD" `
-                --tenant "$env:TENANT_ID"
+              az login --service-principal --username "$env:SP_USERNAME" --password "$env:SP_PASSWORD" --tenant "$env:TENANT_ID"
 
-              # Get access token
               $azureAccessToken = az account get-access-token --query "accessToken" --output tsv
               Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_BEARER_TOKEN]$azureAccessToken"
-              Write-Host "Bearer token retrieved and set."
-
-              # Set remaining variables from environment
               Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_CLIENT_ID]$env:SP_USERNAME"
-              Write-Host "Client ID retrieved and set."
-
               Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_CLIENT_SECRET]$env:SP_PASSWORD"
-              Write-Host "Client secret retrieved and set."
-
               Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_TENANT_ID]$env:TENANT_ID"
-              Write-Host "Tenant ID retrieved and set."
           env:
             SP_USERNAME: $(ARMCLIENTID)
             SP_PASSWORD: $(ARMCLIENTSECRET)
@@ -71,11 +57,7 @@ stages:
             script: |
               $resourceGroup = "${{ stage.AKSRG}}"
               $clusterName = "${{ stage.AKS}}"
-              
-              Write-Host "Getting AKS credentials for cluster '$clusterName' in resource group '$resourceGroup'..."
               az aks get-credentials --resource-group $resourceGroup --name $clusterName --overwrite-existing
-
-              Write-Host "Applying Kubernetes manifest: app/deployment.yaml"
               kubectl apply -f app/deployment.yaml
 
         - task: PowerShell@2
@@ -156,9 +138,6 @@ stages:
             targetType: "inline"
             workingDirectory: releases/echo
             script: |
-              dir
-              ls
-              type APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml
               Set-StrictMode -Version Latest
               $ErrorActionPreference = "Stop"
               $VerbosePreference = "Continue"
@@ -178,5 +157,5 @@ stages:
             AZURE_SUBSCRIPTION_ID: ${{ stage.subscriptionId }}
             AZURE_RESOURCE_GROUP_NAME: ${{ variables.RESOURCE_GROUP_NAME }}
             API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH: ${{ variables.API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH }}
-            API_MANAGEMENT_SERVICE_NAME: ${{ variables.API_MANAGEMENT_SERVICE_NAME }}
+            API_MANAGEMENT_SERVICE_NAME: $(API_MANAGEMENT_SERVICE_NAME)
             CONFIGURATION_YAML_PATH: ${{ variables.CONFIGURATION_YAML_PATH }}

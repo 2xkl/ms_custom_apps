@@ -1,0 +1,21 @@
+namespace: chat
+
+appVersion: "1.0.002"
+replicaCount: 2
+
+image: myregistry.azurecr.io/chat:1.0.002
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 8000
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+
+config:
+  azureKeyVaultName: z-kv-apps-vd-dev
+  azureOpenAIDeployment: gpt-35-turbo
+  azureOpenAIAPIVersion: 2024-05-01-preview
+  clientUrl: ""
+
+umiClientId: UMI_CLIENT_ID

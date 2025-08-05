@@ -48,10 +48,7 @@ stages:
               $VerbosePreference = "Continue"
               $InformationPreference = "Continue"
 
-              az login --service-principal `
-                --username "$env:SP_USERNAME" `
-                --password "$env:SP_PASSWORD" `
-                --tenant "$env:TENANT_ID"
+              az login --service-principal --username "$env:SP_USERNAME" --password "$env:SP_PASSWORD" --tenant "$env:TENANT_ID"
 
               $azureAccessToken = az account get-access-token --query "accessToken" --output tsv
               Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_BEARER_TOKEN]$azureAccessToken"
@@ -86,106 +83,3 @@ stages:
 
               Write-Host "Applying Kubernetes manifest: app/deployment.yaml"
               kubectl apply -f deployment.yaml
-
-        # - task: PowerShell@2
-        #   displayName: "Wait for Service External IP"
-        #   inputs:
-        #     targetType: inline
-        #     workingDirectory: releases/receiver
-        #     script: |
-        #       $serviceName = "receiver"
-        #       $namespace = "receiver"
-        #       $timeoutMinutes = 5
-        #       $intervalSeconds = 10
-        #       $elapsed = 0
-        #       $externalIp = ""
-
-        #       Write-Host "Waiting for external IP of service '$serviceName' in namespace '$namespace'..."
-
-        #       while ($elapsed -lt ($timeoutMinutes * 60)) {
-        #           $externalIp = kubectl get svc $serviceName -n $namespace -o jsonpath="{.status.loadBalancer.ingress[0].ip}"
-        #           if (![string]::IsNullOrEmpty($externalIp)) {
-        #               Write-Host "External IP acquired: $externalIp"
-        #               break
-        #           }
-        #           Start-Sleep -Seconds $intervalSeconds
-        #           $elapsed += $intervalSeconds
-        #           Write-Host "Still waiting... elapsed: $elapsed seconds"
-        #       }
-
-        #       if ([string]::IsNullOrEmpty($externalIp)) {
-        #           Write-Error "Timeout waiting for external IP."
-        #           exit 1
-        #       }
-
-        #       # Set pipeline variable
-        #       Write-Host "##vso[task.setvariable variable=ECHO_SERVICE_IP;isOutput=true]$externalIp"
-
-        #       (Get-Content -Path "./APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml") -replace "SERVICE_IP", "$externalIp" | Set-Content -Path "APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml"
-        #       type APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml
-              
-        # - task: PowerShell@2
-        #   displayName: Fetch receiver
-        #   inputs:
-        #     targetType: "inline"
-        #     workingDirectory: releases/receiver
-        #     script: |
-        #       # Debug: Print variables
-        #       Write-Host "APIOps Release Version: $(apiops_release_version)"
-        #       Write-Host "Operating System: $(Agent.OS)"
-              
-        #       Set-StrictMode -Version Latest
-        #       $ErrorActionPreference = "Stop"
-        #       $VerbosePreference = "Continue"
-        #       $InformationPreference = "Continue"
-
-        #       Write-Information "Downloading receiver..."
-        #       $receiverFileName = "$(Agent.OS)" -like "*win*" ? "receiver.win-x64.exe" : "receiver.linux-x64"
-        #       $uri = "https://github.com/Azure/apiops/releases/download/$(apiops_release_version)/$receiverFileName"
-        #       Write-Host "Constructed Download URI: $uri"
-        #       $destinationFilePath = Join-Path "$(Agent.TempDirectory)" "receiver.exe"
-        #       Invoke-WebRequest -Uri "$uri" -OutFile "$destinationFilePath"
-
-        #       if ("$(Agent.OS)" -like "*linux*")
-        #       {
-        #         Write-Information "Setting file permissions..."
-        #         & chmod +x "$destinationFilePath"
-        #         if ($LASTEXITCODE -ne 0) { throw "Setting file permissions failed."}
-        #       }
-        #       Write-Host "receiverFileName: $receiverFileName"
-        #       Write-Host "DestinationFile: $destinationFilePath"
-        #       Write-Host "##vso[task.setvariable variable=receiver_FILE_PATH]$destinationFilePath"
-        #       Write-Information "Execution complete."
-        #     failOnStderr: true
-        #     pwsh: true
-
-        # - task: PowerShell@2
-        #   displayName: Run receiver for ${{ stage.environmentCode}} environment
-        #   inputs:
-        #     targetType: "inline"
-        #     workingDirectory: releases/receiver
-        #     script: |
-        #       dir
-        #       ls
-        #       type APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml
-        #       Set-StrictMode -Version Latest
-        #       $ErrorActionPreference = "Stop"
-        #       $VerbosePreference = "Continue"
-        #       $InformationPreference = "Continue"
-
-        #       & "$(receiver_FILE_PATH)"                
-        #       if ($LASTEXITCODE -ne 0) { throw "Running receiver failed."}
-
-        #       Write-Information "Execution complete."
-        #     failOnStderr: true
-        #     pwsh: true
-        #   env:
-        #     AZURE_BEARER_TOKEN: $(AZURE_BEARER_TOKEN)
-        #     AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-        #     AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-        #     AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-        #     AZURE_SUBSCRIPTION_ID: ${{ stage.subscriptionId }}
-        #     AZURE_RESOURCE_GROUP_NAME: ${{ variables.RESOURCE_GROUP_NAME }}
-        #     API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH: ${{ variables.API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH }}
-        #     API_MANAGEMENT_SERVICE_NAME: ${{ variables.API_MANAGEMENT_SERVICE_NAME }}
-        #     CONFIGURATION_YAML_PATH: ${{ variables.CONFIGURATION_YAML_PATH }}
