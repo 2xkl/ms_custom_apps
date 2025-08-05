@@ -9,18 +9,8 @@ stages:
     displayName: '${{ stage.name }} Deployment'
     variables:
       - group: SEC_MS
-      - name: apiops_release_version
-        value: "v5.1.4"
-      - name: API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH
-        value: 'APIMConfig'
       - name: RESOURCE_GROUP_NAME
         value: 'z-rg-ingress-dev'
-      - name: API_MANAGEMENT_SERVICE_NAME
-        value: '$(API_MANAGEMENT_SERVICE_NAME)'
-      - name: APIM_LOGGER_NAME
-        value: "appinsights-logger"
-      - name: CONFIGURATION_YAML_PATH
-        value: './APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml'
 
     jobs:
     - job: BuildAndPublish
