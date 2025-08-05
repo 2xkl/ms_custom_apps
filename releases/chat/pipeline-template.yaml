@@ -83,7 +83,7 @@ stages:
               $image = $image.Trim()
 
               helm upgrade --install chat ./HELM `
-                -f values.yaml `
+                -f ./HELM/values.yaml `
                 --set appVersion="$version" `
                 --set version="$version" `
                 --set umiClientId="$umiId" `
