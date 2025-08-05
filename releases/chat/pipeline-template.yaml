@@ -69,24 +69,25 @@ stages:
             targetType: "inline"
             workingDirectory: releases/chat
             script: |
+              $resourceGroup = "${{ stage.AKSRG }}"
+              $clusterName = "${{ stage.AKS }}"
+              $version = "$(Build.BuildNumber)"
 
-              $resourceGroup = "${{ stage.AKSRG}}"
-              $clusterName = "${{ stage.AKS}}"
-              
               Write-Host "Getting AKS credentials for cluster '$clusterName' in resource group '$resourceGroup'..."
               az aks get-credentials --resource-group $resourceGroup --name $clusterName --overwrite-existing
 
-              $umiId = az identity show --name "umi-chat" --resource-group "z-rg-apps-dev"--query clientId -o tsv
+              $umiId = az identity show --name "umi-chat" --resource-group "z-rg-apps-dev" --query clientId -o tsv
 
               $imagePath = "$(Build.ArtifactStagingDirectory)/chat-artifacts/image"
               $image = Get-Content -Path $imagePath -Raw
+              $image = $image.Trim()
 
-              helm upgrade --install chat ./chat `
+              helm upgrade --install chat ./HELM `
                 -f values.yaml `
-                --set appVersion=$version `
-                --set version=$version `
+                --set appVersion="$version" `
+                --set version="$version" `
                 --set umiClientId="$umiId" `
-                --set image.repository="$image `
+                --set image.repository="$image" `
                 --set config.clientUrl="https://frontend.local"
 
         - task: PowerShell@2
