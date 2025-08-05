@@ -71,7 +71,7 @@ stages:
             script: |
               $resourceGroup = "${{ stage.AKSRG }}"
               $clusterName = "${{ stage.AKS }}"
-              $version = "$(Build.BuildNumber)"
+              $version = "1.0.001"
 
               Write-Host "Getting AKS credentials for cluster '$clusterName' in resource group '$resourceGroup'..."
               az aks get-credentials --resource-group $resourceGroup --name $clusterName --overwrite-existing
