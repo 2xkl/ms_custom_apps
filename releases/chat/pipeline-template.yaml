@@ -48,10 +48,7 @@ stages:
               $VerbosePreference = "Continue"
               $InformationPreference = "Continue"
 
-              az login --service-principal `
-                --username "$env:SP_USERNAME" `
-                --password "$env:SP_PASSWORD" `
-                --tenant "$env:TENANT_ID"
+              az login --service-principal --username "$env:SP_USERNAME" --password "$env:SP_PASSWORD" --tenant "$env:TENANT_ID"
 
               $azureAccessToken = az account get-access-token --query "accessToken" --output tsv
               Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_BEARER_TOKEN]$azureAccessToken"
@@ -72,9 +69,7 @@ stages:
               $resourceGroup = "${{ stage.AKSRG }}"
               $clusterName = "${{ stage.AKS }}"
 
-              Write-Host "Getting AKS credentials for cluster '$clusterName' in resource group '$resourceGroup'..."
               az aks get-credentials --resource-group $resourceGroup --name $clusterName --overwrite-existing
-
               $umiId = az identity show --name "umi-chat" --resource-group "z-rg-apps-dev" --query clientId -o tsv
 
               $imagePath = "$(Build.ArtifactStagingDirectory)/chat-artifacts/image"
@@ -168,9 +163,6 @@ stages:
             targetType: "inline"
             workingDirectory: releases/chat
             script: |
-              dir
-              ls
-              type APIMConfig/environments/configuration.${{ stage.environmentCode }}.yaml
               Set-StrictMode -Version Latest
               $ErrorActionPreference = "Stop"
               $VerbosePreference = "Continue"
