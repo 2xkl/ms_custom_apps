@@ -13,10 +13,10 @@ service:
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 
 config:
-  servicebusNamespace: "sb-apps-cust-dev.servicebus.windows.net"
+  servicebusNamespace: "sb-apps-krkm-dev.servicebus.windows.net"
   servicebusTopic: "events"
   servicebusSubscription: "mails"
-  inspectorUrl: "http://192.168.61.34/inspect"
+  inspectorUrl: "http://192.168.61.37/inspect"
   storageAccount: "storrankrkmdev"
   table: "email"
 

@@ -13,7 +13,7 @@ service:
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 
 config:
-  servicebusNamespace: "sb-apps-cust-dev.servicebus.windows.net"
+  servicebusNamespace: "sb-apps-krkm-dev.servicebus.windows.net"
   servicebusTopicName: "events"
 
 umiClientId: UMI_CLIENT_ID
