@@ -16,7 +16,6 @@ stages:
         - ${{ if eq(parameters.dev, true) }}:
             - name: "Deploy_to_Apim_v2_Dev"
               environmentCode: dev
-              ENVIRONMENT: DEV
               AKS: "akscluster"
               AKSRG: "z-rg-aks-dev"
-              subscriptionId: "315e574e-7153-4853-8cfe-fa416bb08a23"
+              subscriptionId: "42cc25b1-5f27-40a1-a857-9668d4e6e278"

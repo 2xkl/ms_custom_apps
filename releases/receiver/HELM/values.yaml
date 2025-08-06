@@ -17,7 +17,7 @@ config:
   servicebusTopic: "events"
   servicebusSubscription: "mails"
   inspectorUrl: "http://192.168.61.34/inspect"
-  storageAccount: "storrandocuas2"
+  storageAccount: "storrankrkmdev"
   table: "email"
 
 umiClientId: UMI_CLIENT_ID
