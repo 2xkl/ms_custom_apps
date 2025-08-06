@@ -1,7 +1,7 @@
 namespace: chat
 
 appVersion: "1.0.002"
-replicaCount: 2
+replicaCount: 1
 
 image: myregistry.azurecr.io/chat:1.0.002
 
