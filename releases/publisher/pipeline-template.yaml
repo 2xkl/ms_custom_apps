@@ -73,7 +73,7 @@ stages:
               $imagePath = "$(Build.ArtifactStagingDirectory)/publisher-artifacts/image"
               $image = Get-Content -Path $imagePath -Raw
               $image = $image.Trim()
-              $version = "1.0.000"
+              $version = "1.0.001"
 
               helm upgrade --install publisher ./HELM `
                 -f ./HELM/values.yaml `
