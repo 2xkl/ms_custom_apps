@@ -13,7 +13,7 @@ service:
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 
 config:
-  azureKeyVaultName: z-kv-apps-krkm-dev
+  azureKeyVaultName: z-kv-apps-krkmm-dev
   azureOpenAIDeployment: gpt-35-turbo
   azureOpenAIAPIVersion: 2024-05-01-preview
 
