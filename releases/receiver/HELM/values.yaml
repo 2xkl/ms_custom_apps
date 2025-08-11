@@ -16,7 +16,7 @@ config:
   servicebusNamespace: "sb-apps-krkm-dev.servicebus.windows.net"
   servicebusTopic: "events"
   servicebusSubscription: "mails"
-  inspectorUrl: "http://192.168.61.37/inspect"
+  inspectorUrl: "http://192.168.61.35/inspect"
   storageAccount: "storrankrkmdev"
   table: "email"
 
